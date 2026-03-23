@@ -124,7 +124,7 @@ const newMovies = [
 
 export default function MovieDirectory() {
   return (
-    <div className="min-h-screen bg-[#050507] text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#050507] text-white relative overflow-hidden px-20">
       {/* Subtle gradient orbs for depth */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-white/[0.02] to-transparent blur-3xl" />
