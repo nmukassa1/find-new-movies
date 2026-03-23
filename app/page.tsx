@@ -124,28 +124,36 @@ const newMovies = [
 
 export default function MovieDirectory() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <Header />
-      <main className="px-6 lg:px-12 pb-12">
-        {/* Hero and Now Watching Section */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-8">
-          <div className="flex-1">
-            <HeroSection />
+    <div className="min-h-screen bg-[#050507] text-white relative overflow-hidden">
+      {/* Subtle gradient orbs for depth */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-white/[0.02] to-transparent blur-3xl" />
+        <div className="absolute -bottom-[30%] -right-[20%] w-[60%] h-[60%] rounded-full bg-gradient-to-tl from-white/[0.015] to-transparent blur-3xl" />
+      </div>
+
+      <div className="relative z-10">
+        <Header />
+        <main className="px-6 lg:px-12 pb-12">
+          {/* Hero and Now Watching Section */}
+          <div className="flex flex-col lg:flex-row gap-6 mb-10">
+            <div className="flex-1">
+              <HeroSection />
+            </div>
+            <div className="w-full lg:w-80">
+              <NowWatching />
+            </div>
           </div>
-          <div className="w-full lg:w-80">
-            <NowWatching />
-          </div>
-        </div>
 
-        {/* Genre Filter */}
-        <GenreFilter />
+          {/* Genre Filter */}
+          <GenreFilter />
 
-        {/* Trending Section */}
-        <MovieSection title="Trending" movies={trendingMovies} />
+          {/* Trending Section */}
+          <MovieSection title="Trending" movies={trendingMovies} />
 
-        {/* New Section */}
-        <MovieSection title="New" movies={newMovies} />
-      </main>
+          {/* New Section */}
+          <MovieSection title="New" movies={newMovies} />
+        </main>
+      </div>
     </div>
   );
 }
