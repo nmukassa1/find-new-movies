@@ -16,17 +16,17 @@ const genres = [
 export function GenreFilter() {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-10">
-      <span className="text-xs text-white/40 whitespace-nowrap tracking-wide uppercase">
+      <span className="text-xs text-[#1a1a1f]/40 whitespace-nowrap tracking-wide uppercase">
         Find by<br />genre
       </span>
       <div className="flex flex-wrap gap-2">
         {genres.map((genre, index) => (
           <button
             key={genre.name}
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] rounded-full text-sm text-white/70 transition-all duration-300 hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-white/95 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-white/[0.1] group"
+            className="flex items-center gap-2.5 px-5 py-2.5 bg-white/60 backdrop-blur-xl border border-black/[0.04] rounded-full text-sm text-[#1a1a1f]/70 shadow-sm transition-all duration-300 hover:bg-white/90 hover:border-black/[0.08] hover:text-[#1a1a1f] hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-black/[0.06] group"
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            <genre.icon className="w-4 h-4 text-white/40 transition-colors duration-300 group-hover:text-[#e8e8ed]" />
+            <genre.icon className="w-4 h-4 text-[#1a1a1f]/40 transition-colors duration-300 group-hover:text-[#1a1a1f]" />
             <span className="font-medium">{genre.name}</span>
           </button>
         ))}

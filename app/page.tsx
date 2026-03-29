@@ -124,16 +124,17 @@ const newMovies = [
 
 export default function MovieDirectory() {
   return (
-    <div className="min-h-screen bg-[#050507] text-white relative overflow-hidden px-20">
-      {/* Subtle gradient orbs for depth */}
+    <div className="min-h-screen bg-[#f8f8fa] text-[#1a1a1f] relative overflow-hidden">
+      {/* Subtle gradient orbs for depth - light mode */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-white/[0.02] to-transparent blur-3xl" />
-        <div className="absolute -bottom-[30%] -right-[20%] w-[60%] h-[60%] rounded-full bg-gradient-to-tl from-white/[0.015] to-transparent blur-3xl" />
+        <div className="absolute -top-[40%] -left-[20%] w-[80%] h-[80%] rounded-full bg-gradient-to-br from-blue-100/40 to-transparent blur-3xl" />
+        <div className="absolute -bottom-[30%] -right-[20%] w-[60%] h-[60%] rounded-full bg-gradient-to-tl from-purple-100/30 to-transparent blur-3xl" />
+        <div className="absolute top-[20%] right-[10%] w-[40%] h-[40%] rounded-full bg-gradient-to-bl from-rose-100/20 to-transparent blur-3xl" />
       </div>
 
       <div className="relative z-10">
         <Header />
-        <main className="px-6 lg:px-12 pb-12">
+        <main className="px-6 lg:px-12 xl:px-20 pb-12">
           {/* Hero and Now Watching Section */}
           <div className="flex flex-col lg:flex-row gap-6 mb-10">
             <div className="flex-1">
