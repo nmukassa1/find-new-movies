@@ -1,75 +1,48 @@
 "use client";
 
-import { Search, MessageSquare, Bell, ChevronDown, Flame } from "lucide-react";
+import { Search, Home, Tv, Film, Plus, User } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="flex items-center justify-between px-6 lg:px-12 py-5 bg-transparent">
-      {/* Logo */}
-      <div className="flex items-center gap-10">
-        <div className="flex items-center gap-2 group cursor-pointer">
-          <div className="text-[#1a1a1f] font-semibold text-lg tracking-wider transition-all duration-300 group-hover:text-black">
-            <span className="text-[10px] tracking-[0.35em] block opacity-60 group-hover:opacity-100 transition-opacity duration-300">MOVIE</span>
-            <span className="text-[10px] tracking-[0.35em] opacity-60 group-hover:opacity-100 transition-opacity duration-300">GATHER</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-[#0c111b] via-[#0c111b]/80 to-transparent">
+      <div className="flex items-center justify-between px-9 py-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <div className="text-2xl font-bold tracking-tight">
+            <span className="text-[#f9f9f9]">STREAM</span>
+            <span className="text-[#0063e5]">+</span>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
-          <a
-            href="#"
-            className="flex items-center gap-2 text-[#1a1a1f] text-sm font-medium px-4 py-2 rounded-full bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm transition-all duration-300 hover:bg-white/90 hover:border-black/[0.1] hover:shadow-md"
-          >
-            <Flame className="w-4 h-4 text-[#1a1a1f]" />
-            BOARD
+        <nav className="hidden md:flex items-center gap-6">
+          <a href="#" className="nav-item flex items-center gap-2 text-[#f9f9f9] opacity-80 hover:opacity-100 transition-opacity duration-200">
+            <Home size={18} />
+            <span className="text-[13px] font-medium tracking-wide uppercase">Home</span>
           </a>
-          <a href="#" className="text-[#1a1a1f]/50 text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 hover:text-[#1a1a1f] hover:bg-black/[0.03]">
-            NEW
+          <a href="#" className="nav-item flex items-center gap-2 text-[#f9f9f9] opacity-80 hover:opacity-100 transition-opacity duration-200">
+            <Search size={18} />
+            <span className="text-[13px] font-medium tracking-wide uppercase">Search</span>
           </a>
-          <a href="#" className="text-[#1a1a1f]/50 text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 hover:text-[#1a1a1f] hover:bg-black/[0.03]">
-            MOVIES
+          <a href="#" className="nav-item flex items-center gap-2 text-[#f9f9f9] opacity-80 hover:opacity-100 transition-opacity duration-200">
+            <Plus size={18} />
+            <span className="text-[13px] font-medium tracking-wide uppercase">Watchlist</span>
           </a>
-          <a href="#" className="text-[#1a1a1f]/50 text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 hover:text-[#1a1a1f] hover:bg-black/[0.03]">
-            SERIES
+          <a href="#" className="nav-item flex items-center gap-2 text-[#f9f9f9] opacity-80 hover:opacity-100 transition-opacity duration-200">
+            <Film size={18} />
+            <span className="text-[13px] font-medium tracking-wide uppercase">Movies</span>
+          </a>
+          <a href="#" className="nav-item flex items-center gap-2 text-[#f9f9f9] opacity-80 hover:opacity-100 transition-opacity duration-200">
+            <Tv size={18} />
+            <span className="text-[13px] font-medium tracking-wide uppercase">Series</span>
           </a>
         </nav>
-      </div>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-3">
-        {/* Search */}
-        <div className="hidden sm:flex items-center bg-white/60 backdrop-blur-xl rounded-full px-4 py-2.5 gap-2.5 border border-black/[0.06] shadow-sm transition-all duration-300 hover:bg-white/80 hover:border-black/[0.08] hover:shadow-md focus-within:bg-white/90 focus-within:border-black/[0.1] focus-within:shadow-md">
-          <Search className="w-4 h-4 text-[#1a1a1f]/40" />
-          <input
-            type="text"
-            placeholder="Search"
-            className="bg-transparent text-sm text-[#1a1a1f] placeholder-[#1a1a1f]/30 outline-none w-28 focus:w-36 transition-all duration-300"
-          />
-        </div>
-
-        {/* Icons */}
-        <button className="p-2.5 text-[#1a1a1f]/40 rounded-full transition-all duration-300 hover:text-[#1a1a1f] hover:bg-black/[0.03]">
-          <MessageSquare className="w-5 h-5" />
-        </button>
-        <button className="p-2.5 text-[#1a1a1f]/40 rounded-full transition-all duration-300 hover:text-[#1a1a1f] hover:bg-black/[0.03] relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#1a1a1f] rounded-full" />
-        </button>
-
-        {/* User Profile */}
-        <div className="flex items-center gap-3 bg-white/60 backdrop-blur-xl rounded-full pl-1.5 pr-4 py-1.5 border border-black/[0.06] shadow-sm transition-all duration-300 hover:bg-white/80 hover:border-black/[0.08] hover:shadow-md cursor-pointer group">
-          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-black/[0.06] group-hover:ring-black/[0.1] transition-all duration-300">
-            <img
-              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop"
-              alt="User avatar"
-              className="w-full h-full object-cover"
-            />
+        {/* Profile */}
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-[#0063e5] flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-[#f9f9f9] transition-all duration-200">
+            <User size={20} className="text-[#f9f9f9]" />
           </div>
-          <div className="hidden sm:block">
-            <p className="text-sm font-medium text-[#1a1a1f] leading-tight">Lee Phong</p>
-            <p className="text-[10px] text-[#1a1a1f]/40 tracking-wide">Premium</p>
-          </div>
-          <ChevronDown className="w-4 h-4 text-[#1a1a1f]/30 group-hover:text-[#1a1a1f]/50 transition-colors duration-300" />
         </div>
       </div>
     </header>

@@ -1,92 +1,82 @@
 "use client";
 
-import { Play, Star, MessageSquare } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const nowWatchingList = [
+const continueWatching = [
   {
     id: 1,
-    title: "Pluribus",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=200&fit=crop",
-    views: 123,
-    rating: 4.8,
-    comments: 18,
+    title: "Loki",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=225&fit=crop",
+    progress: 65,
   },
   {
     id: 2,
-    title: "His & Hers",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&h=200&fit=crop",
-    views: 422,
-    rating: 4.8,
-    comments: 18,
-    season: 8,
-    episode: 4,
+    title: "The Mandalorian",
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=225&fit=crop",
+    progress: 30,
   },
   {
     id: 3,
-    title: "Greenland 2",
-    image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300&h=200&fit=crop",
-    views: 307,
-    rating: 4.8,
-    comments: 18,
+    title: "WandaVision",
+    image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=225&fit=crop",
+    progress: 80,
+  },
+  {
+    id: 4,
+    title: "The Falcon",
+    image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=225&fit=crop",
+    progress: 45,
+  },
+  {
+    id: 5,
+    title: "Moon Knight",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=225&fit=crop",
+    progress: 20,
   },
 ];
 
 export function NowWatching() {
   return (
-    <div className="space-y-5">
-      <h2 className="text-lg font-medium text-[#1a1a1f] tracking-tight">Now watching</h2>
-      <div className="space-y-3">
-        {nowWatchingList.map((item, index) => (
+    <section className="mb-8 px-8 lg:px-16">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="section-title text-[#f9f9f9]">Continue Watching</h2>
+        <div className="flex gap-2">
+          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
+            <ChevronLeft className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          </button>
+          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
+            <ChevronRight className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Continue Watching Carousel */}
+      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
+        {continueWatching.map((item) => (
           <div
             key={item.id}
-            className="flex gap-3 bg-white/60 backdrop-blur-xl rounded-2xl overflow-hidden border border-black/[0.04] shadow-sm transition-all duration-300 hover:bg-white/80 hover:border-black/[0.06] hover:shadow-md cursor-pointer group"
-            style={{ animationDelay: `${index * 100}ms` }}
+            className="disney-card flex-shrink-0 w-[200px] lg:w-[240px] cursor-pointer rounded-[4px] overflow-hidden"
           >
             {/* Thumbnail */}
-            <div className="relative w-28 h-20 flex-shrink-0 overflow-hidden">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-[4px] bg-[#1a1d29]">
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center transition-all duration-300 group-hover:bg-black/20">
-                <div className="w-8 h-8 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center border border-white/20 transition-all duration-300 group-hover:bg-white/40 group-hover:scale-110">
-                  <Play className="w-3.5 h-3.5 text-white fill-white ml-0.5" />
-                </div>
-              </div>
-              <div className="absolute top-1.5 right-1.5 bg-black/40 backdrop-blur-md text-[9px] text-white px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/10">
-                <Star className="w-2 h-2 fill-white/80" />
-                {item.views}
-              </div>
-            </div>
-
-            {/* Info */}
-            <div className="flex flex-col justify-center py-2 pr-3">
-              <h3 className="text-sm font-medium text-[#1a1a1f] mb-1.5 transition-colors duration-300 group-hover:text-black">{item.title}</h3>
-              {item.season && (
-                <div className="flex gap-1.5 mb-1.5">
-                  <span className="text-[9px] bg-black/[0.04] text-[#1a1a1f]/70 px-2 py-0.5 rounded-full border border-black/[0.04]">
-                    {item.season} season
-                  </span>
-                  <span className="text-[9px] bg-[#1a1a1f] text-white px-2 py-0.5 rounded-full">
-                    {item.episode} episode
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center gap-3 text-[10px] text-[#1a1a1f]/40">
-                <span className="flex items-center gap-1 transition-colors duration-300 hover:text-[#1a1a1f]/60">
-                  <Star className="w-2.5 h-2.5 text-[#1a1a1f]" />
-                  {item.rating} iMDB
-                </span>
-                <span className="flex items-center gap-1 transition-colors duration-300 hover:text-[#1a1a1f]/60">
-                  <MessageSquare className="w-2.5 h-2.5" />
-                  {item.comments}
-                </span>
+              
+              {/* Progress Bar */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#f9f9f9]/30">
+                <div 
+                  className="h-full bg-[#f9f9f9]"
+                  style={{ width: `${item.progress}%` }}
+                />
               </div>
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

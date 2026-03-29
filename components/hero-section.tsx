@@ -1,67 +1,61 @@
 "use client";
 
-import { Play, Download, Star, MessageSquare } from "lucide-react";
+import { Play, Plus, Users, Info } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <div className="relative rounded-[2rem] overflow-hidden h-[360px] bg-white/40 backdrop-blur-xl border border-black/[0.04] shadow-xl group">
+    <div className="relative w-full h-[500px] lg:h-[600px] overflow-hidden">
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop')`,
         }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-      </div>
-
-      {/* Subtle noise texture overlay */}
-      <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" 
-        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} 
       />
-
-      {/* Carousel Dots */}
-      <div className="absolute top-6 left-6 flex gap-2">
-        {[0, 1, 2, 3].map((i) => (
-          <button
-            key={i}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === 1 
-                ? 'bg-white w-6' 
-                : 'bg-white/30 hover:bg-white/50'
-            }`}
-          />
-        ))}
-      </div>
-
+      
+      {/* Gradient Overlays */}
+      <div className="hero-gradient absolute inset-0" />
+      <div className="hero-vignette absolute inset-0" />
+      
       {/* Content */}
-      <div className="absolute bottom-0 left-0 p-8 flex items-end justify-between w-full">
-        <div className="space-y-4">
-          <span className="text-xs text-white/50 tracking-[0.2em] uppercase font-medium">2025</span>
-          <h1 className="text-4xl font-semibold text-white tracking-tight text-balance leading-tight">
+      <div className="absolute bottom-0 left-0 p-8 lg:p-16 max-w-2xl">
+        {/* Logo/Title Treatment */}
+        <div className="mb-6">
+          <img 
+            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=150&fit=crop"
+            alt="Movie Title"
+            className="h-24 lg:h-32 object-contain mb-4 hidden"
+          />
+          <h1 className="text-4xl lg:text-6xl font-bold text-[#f9f9f9] tracking-tight mb-2">
             Dune: Part Two
           </h1>
-          <div className="flex items-center gap-5 text-sm text-white/60">
-            <span className="flex items-center gap-2 transition-colors duration-300 hover:text-white/90">
-              <Download className="w-4 h-4" />
-              <span className="font-medium">243</span>
-            </span>
-            <span className="flex items-center gap-2 transition-colors duration-300 hover:text-white/90">
-              <Star className="w-4 h-4 text-white" />
-              <span className="font-medium">4.8 iMDB</span>
-            </span>
-            <span className="flex items-center gap-2 transition-colors duration-300 hover:text-white/90">
-              <MessageSquare className="w-4 h-4" />
-              <span className="font-medium">18</span>
-            </span>
-          </div>
+          <p className="text-sm text-[#f9f9f9]/70 font-medium tracking-wide">
+            2024 &bull; 2h 46m &bull; PG-13 &bull; Action, Adventure, Sci-Fi
+          </p>
         </div>
 
-        {/* Play Button */}
-        <button className="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-[1.25rem] flex items-center justify-center border border-white/20 transition-all duration-300 hover:bg-white/30 hover:border-white/30 hover:scale-105 group/play shadow-lg">
-          <Play className="w-7 h-7 text-white fill-white ml-1 transition-transform duration-300 group-hover/play:scale-110" />
-        </button>
+        {/* Description */}
+        <p className="text-[#f9f9f9]/80 text-sm lg:text-base leading-relaxed mb-6 line-clamp-3">
+          Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the universe.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-3 bg-[#f9f9f9] hover:bg-[#c6c6c6] text-[#0c111b] font-semibold px-8 py-4 rounded-[4px] transition-all duration-200 uppercase text-sm tracking-wider">
+            <Play size={20} className="fill-[#0c111b]" />
+            Play
+          </button>
+          <button className="flex items-center gap-3 bg-[#f9f9f9]/20 hover:bg-[#f9f9f9]/30 border-2 border-[#f9f9f9] text-[#f9f9f9] font-semibold px-8 py-4 rounded-[4px] transition-all duration-200 uppercase text-sm tracking-wider">
+            <Plus size={20} />
+            Watchlist
+          </button>
+          <button className="w-12 h-12 rounded-full border-2 border-[#f9f9f9] bg-[#0c111b]/60 hover:bg-[#f9f9f9]/20 flex items-center justify-center transition-all duration-200">
+            <Users size={20} className="text-[#f9f9f9]" />
+          </button>
+          <button className="w-12 h-12 rounded-full border-2 border-[#f9f9f9] bg-[#0c111b]/60 hover:bg-[#f9f9f9]/20 flex items-center justify-center transition-all duration-200">
+            <Info size={20} className="text-[#f9f9f9]" />
+          </button>
+        </div>
       </div>
     </div>
   );
