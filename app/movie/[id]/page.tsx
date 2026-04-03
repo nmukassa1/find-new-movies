@@ -108,7 +108,7 @@ export default async function MovieDetailPage({
   const movie = movieData[id] || defaultMovie;
 
   return (
-    <div className="min-h-screen bg-[#0c111b]">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main>

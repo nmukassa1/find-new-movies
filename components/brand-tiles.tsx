@@ -4,27 +4,22 @@ const brands = [
   {
     name: "Disney",
     image: "https://images.unsplash.com/photo-1597466599360-3b9775841aec?w=400&h=200&fit=crop",
-    color: "#1a1d29",
   },
   {
     name: "Pixar",
     image: "https://images.unsplash.com/photo-1608889825205-eebdb9fc5806?w=400&h=200&fit=crop",
-    color: "#1a1d29",
   },
   {
     name: "Marvel",
     image: "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=400&h=200&fit=crop",
-    color: "#1a1d29",
   },
   {
     name: "Star Wars",
     image: "https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=400&h=200&fit=crop",
-    color: "#1a1d29",
   },
   {
     name: "National Geographic",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop",
-    color: "#1a1d29",
   },
 ];
 
@@ -34,7 +29,7 @@ export function BrandTiles() {
       {brands.map((brand) => (
         <div
           key={brand.name}
-          className="brand-tile relative aspect-[16/9] rounded-lg overflow-hidden cursor-pointer bg-[#1a1d29]"
+          className="brand-tile relative aspect-[16/9] rounded-lg overflow-hidden cursor-pointer bg-card"
         >
           {/* Background Image */}
           <img
@@ -53,13 +48,13 @@ export function BrandTiles() {
           
           {/* Brand Name */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[#f9f9f9] font-bold text-sm lg:text-xl tracking-wide uppercase">
+            <span className="text-foreground font-bold text-sm lg:text-xl tracking-wide uppercase">
               {brand.name}
             </span>
           </div>
           
           {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1a1d29]/80 via-transparent to-[#1a1d29]/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-card/40" />
         </div>
       ))}
     </div>

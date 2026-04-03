@@ -17,24 +17,24 @@ interface CastSectionProps {
 
 export function CastSection({ cast, director, writers }: CastSectionProps) {
   return (
-    <section className="px-8 lg:px-16 py-8 bg-[#0c111b]">
+    <section className="px-8 lg:px-16 py-8 bg-background">
       {/* Director & Writers */}
-      <div className="flex flex-wrap gap-8 mb-8 pb-6 border-b border-[#2a3144]">
+      <div className="flex flex-wrap gap-8 mb-8 pb-6 border-b border-border">
         <div>
-          <h3 className="text-xs uppercase tracking-wider text-[#f9f9f9]/40 mb-2">Director</h3>
-          <p className="text-[#f9f9f9] font-medium hover:text-[#0063e5] cursor-pointer transition-colors">
+          <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">Director</h3>
+          <p className="text-foreground font-medium hover:text-primary cursor-pointer transition-colors">
             {director}
           </p>
         </div>
         <div>
-          <h3 className="text-xs uppercase tracking-wider text-[#f9f9f9]/40 mb-2">Writers</h3>
-          <p className="text-[#f9f9f9]">
+          <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">Writers</h3>
+          <p className="text-foreground">
             {writers.map((writer, index) => (
               <span key={writer}>
-                <span className="hover:text-[#0063e5] cursor-pointer transition-colors">
+                <span className="hover:text-primary cursor-pointer transition-colors">
                   {writer}
                 </span>
-                {index < writers.length - 1 && <span className="text-[#f9f9f9]/40">, </span>}
+                {index < writers.length - 1 && <span className="text-foreground/40">, </span>}
               </span>
             ))}
           </p>
@@ -43,13 +43,13 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
 
       {/* Cast Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="section-title text-[#f9f9f9]">Cast & Crew</h2>
+        <h2 className="section-title text-foreground">Cast & Crew</h2>
         <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
-            <ChevronLeft className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
+            <ChevronLeft className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
           </button>
-          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
-            <ChevronRight className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
+            <ChevronRight className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
           </button>
         </div>
       </div>
@@ -62,7 +62,7 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
             className="flex-shrink-0 w-[140px] cursor-pointer group"
           >
             {/* Photo */}
-            <div className="relative w-full aspect-square overflow-hidden rounded-full mb-3 bg-[#1a1d29] border-2 border-transparent group-hover:border-[#f9f9f9]/40 transition-all duration-300">
+            <div className="relative w-full aspect-square overflow-hidden rounded-full mb-3 bg-card border-2 border-transparent group-hover:border-foreground/40 transition-all duration-300">
               <img
                 src={member.photo}
                 alt={member.name}
@@ -72,10 +72,10 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
             
             {/* Info */}
             <div className="text-center">
-              <h3 className="text-sm font-medium text-[#f9f9f9] truncate group-hover:text-[#0063e5] transition-colors">
+              <h3 className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
                 {member.name}
               </h3>
-              <p className="text-xs text-[#f9f9f9]/50 truncate mt-1">
+              <p className="text-xs text-foreground/50 truncate mt-1">
                 {member.character}
               </p>
             </div>

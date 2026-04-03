@@ -18,16 +18,16 @@ export function RelatedMovies({ movies }: RelatedMoviesProps) {
   if (movies.length === 0) return null;
 
   return (
-    <section className="px-8 lg:px-16 py-8 bg-[#0c111b]">
+    <section className="px-8 lg:px-16 py-8 bg-background">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="section-title text-[#f9f9f9]">More Like This</h2>
+        <h2 className="section-title text-foreground">More Like This</h2>
         <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
-            <ChevronLeft className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
+            <ChevronLeft className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
           </button>
-          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
-            <ChevronRight className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
+            <ChevronRight className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
           </button>
         </div>
       </div>
@@ -41,7 +41,7 @@ export function RelatedMovies({ movies }: RelatedMoviesProps) {
             className="disney-card flex-shrink-0 w-[140px] lg:w-[180px] cursor-pointer rounded-lg overflow-hidden"
           >
             {/* Poster */}
-            <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-[#1a1d29]">
+            <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-card">
               <img
                 src={movie.poster}
                 alt={movie.title}
@@ -53,8 +53,8 @@ export function RelatedMovies({ movies }: RelatedMoviesProps) {
             
             {/* Movie info below poster */}
             <div className="pt-3 pb-1">
-              <h3 className="text-[#f9f9f9] text-sm font-medium truncate">{movie.title}</h3>
-              <div className="flex items-center gap-1 mt-1 text-xs text-[#f9f9f9]/50">
+              <h3 className="text-foreground text-sm font-medium truncate">{movie.title}</h3>
+              <div className="flex items-center gap-1 mt-1 text-xs text-foreground/50">
                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                 <span>{movie.rating}</span>
               </div>

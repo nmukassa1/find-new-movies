@@ -45,26 +45,26 @@ export function MovieHero({ movie }: MovieHeroProps) {
               className="max-w-md h-auto"
             />
           ) : (
-            <h1 className="text-5xl lg:text-7xl font-bold text-[#f9f9f9] tracking-tight">
+            <h1 className="text-5xl lg:text-7xl font-bold text-foreground tracking-tight">
               {movie.title}
             </h1>
           )}
 
           {/* Tagline */}
-          <p className="text-xl lg:text-2xl text-[#f9f9f9]/80 italic">
+          <p className="text-xl lg:text-2xl text-foreground/80 italic">
             {movie.tagline}
           </p>
 
           {/* Metadata */}
-          <div className="flex flex-wrap items-center gap-3 text-sm text-[#f9f9f9]/70">
-            <span className="font-semibold text-[#f9f9f9]">{movie.year}</span>
-            <span className="w-1 h-1 rounded-full bg-[#f9f9f9]/40" />
+          <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/70">
+            <span className="font-semibold text-foreground">{movie.year}</span>
+            <span className="w-1 h-1 rounded-full bg-foreground/40" />
             <span>{movie.runtime}</span>
-            <span className="w-1 h-1 rounded-full bg-[#f9f9f9]/40" />
-            <span className="px-2 py-0.5 border border-[#f9f9f9]/40 rounded text-xs">
+            <span className="w-1 h-1 rounded-full bg-foreground/40" />
+            <span className="px-2 py-0.5 border border-foreground/40 rounded text-xs">
               {movie.rating}
             </span>
-            <span className="w-1 h-1 rounded-full bg-[#f9f9f9]/40" />
+            <span className="w-1 h-1 rounded-full bg-foreground/40" />
             {movie.genres.map((genre, index) => (
               <span key={genre}>
                 {genre}
@@ -77,26 +77,26 @@ export function MovieHero({ movie }: MovieHeroProps) {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button className="flex items-center gap-3 px-8 py-4 bg-[#f9f9f9] text-[#0c111b] rounded-[4px] font-semibold text-lg hover:bg-[#f9f9f9]/90 transition-all duration-200 group">
+            <button className="flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-[4px] font-semibold text-lg hover:bg-foreground/90 transition-all duration-200 group">
               <Play className="w-6 h-6 fill-current" />
               <span>Play</span>
             </button>
             
-            <button className="flex items-center gap-3 px-8 py-4 bg-[#f9f9f9]/10 backdrop-blur-sm text-[#f9f9f9] rounded-[4px] font-semibold text-lg border border-[#f9f9f9]/20 hover:bg-[#f9f9f9]/20 transition-all duration-200">
+            <button className="flex items-center gap-3 px-8 py-4 bg-foreground/10 backdrop-blur-sm text-foreground rounded-[4px] font-semibold text-lg border border-foreground/20 hover:bg-foreground/20 transition-all duration-200">
               <Play className="w-6 h-6" />
               <span>Trailer</span>
             </button>
             
-            <button className="flex items-center justify-center w-14 h-14 rounded-full bg-[#22293a]/80 backdrop-blur-sm border-2 border-[#f9f9f9]/20 hover:border-[#f9f9f9]/60 transition-all duration-200 group">
-              <Plus className="w-6 h-6 text-[#f9f9f9] group-hover:scale-110 transition-transform" />
+            <button className="flex items-center justify-center w-14 h-14 rounded-full bg-muted/80 backdrop-blur-sm border-2 border-foreground/20 hover:border-foreground/60 transition-all duration-200 group">
+              <Plus className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
             </button>
             
-            <button className="flex items-center justify-center w-14 h-14 rounded-full bg-[#22293a]/80 backdrop-blur-sm border-2 border-[#f9f9f9]/20 hover:border-[#f9f9f9]/60 transition-all duration-200 group">
-              <Users className="w-6 h-6 text-[#f9f9f9] group-hover:scale-110 transition-transform" />
+            <button className="flex items-center justify-center w-14 h-14 rounded-full bg-muted/80 backdrop-blur-sm border-2 border-foreground/20 hover:border-foreground/60 transition-all duration-200 group">
+              <Users className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
             </button>
             
-            <button className="flex items-center justify-center w-14 h-14 rounded-full bg-[#22293a]/80 backdrop-blur-sm border-2 border-[#f9f9f9]/20 hover:border-[#f9f9f9]/60 transition-all duration-200 group">
-              <Info className="w-6 h-6 text-[#f9f9f9] group-hover:scale-110 transition-transform" />
+            <button className="flex items-center justify-center w-14 h-14 rounded-full bg-muted/80 backdrop-blur-sm border-2 border-foreground/20 hover:border-foreground/60 transition-all duration-200 group">
+              <Info className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
             </button>
           </div>
         </div>
@@ -104,12 +104,12 @@ export function MovieHero({ movie }: MovieHeroProps) {
         {/* Volume Control */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="absolute right-8 lg:right-16 bottom-16 flex items-center justify-center w-12 h-12 rounded-full bg-[#22293a]/60 backdrop-blur-sm border border-[#f9f9f9]/20 hover:border-[#f9f9f9]/40 transition-all duration-200"
+          className="absolute right-8 lg:right-16 bottom-16 flex items-center justify-center w-12 h-12 rounded-full bg-muted/60 backdrop-blur-sm border border-foreground/20 hover:border-foreground/40 transition-all duration-200"
         >
           {isMuted ? (
-            <VolumeX className="w-5 h-5 text-[#f9f9f9]" />
+            <VolumeX className="w-5 h-5 text-foreground" />
           ) : (
-            <Volume2 className="w-5 h-5 text-[#f9f9f9]" />
+            <Volume2 className="w-5 h-5 text-foreground" />
           )}
         </button>
       </div>

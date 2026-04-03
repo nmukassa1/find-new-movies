@@ -26,34 +26,34 @@ export function HeroSection() {
             alt="Movie Title"
             className="h-24 lg:h-32 object-contain mb-4 hidden"
           />
-          <h1 className="text-4xl lg:text-6xl font-bold text-[#f9f9f9] tracking-tight mb-2">
+          <h1 className="text-4xl lg:text-6xl font-bold text-foreground tracking-tight mb-2">
             Dune: Part Two
           </h1>
-          <p className="text-sm text-[#f9f9f9]/70 font-medium tracking-wide">
+          <p className="text-sm text-foreground/70 font-medium tracking-wide">
             2024 &bull; 2h 46m &bull; PG-13 &bull; Action, Adventure, Sci-Fi
           </p>
         </div>
 
         {/* Description */}
-        <p className="text-[#f9f9f9]/80 text-sm lg:text-base leading-relaxed mb-6 line-clamp-3">
+        <p className="text-foreground/80 text-sm lg:text-base leading-relaxed mb-6 line-clamp-3">
           Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the universe.
         </p>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-3 bg-[#f9f9f9] hover:bg-[#c6c6c6] text-[#0c111b] font-semibold px-8 py-4 rounded-[4px] transition-all duration-200 uppercase text-sm tracking-wider">
-            <Play size={20} className="fill-[#0c111b]" />
+          <button className="flex items-center gap-3 bg-foreground hover:bg-foreground-cta-hover text-background font-semibold px-8 py-4 rounded-[4px] transition-all duration-200 uppercase text-sm tracking-wider">
+            <Play size={20} className="fill-background" />
             Play
           </button>
-          <button className="flex items-center gap-3 bg-[#f9f9f9]/20 hover:bg-[#f9f9f9]/30 border-2 border-[#f9f9f9] text-[#f9f9f9] font-semibold px-8 py-4 rounded-[4px] transition-all duration-200 uppercase text-sm tracking-wider">
+          <button className="flex items-center gap-3 bg-foreground/20 hover:bg-foreground/30 border-2 border-foreground text-foreground font-semibold px-8 py-4 rounded-[4px] transition-all duration-200 uppercase text-sm tracking-wider">
             <Plus size={20} />
             Watchlist
           </button>
-          <button className="w-12 h-12 rounded-full border-2 border-[#f9f9f9] bg-[#0c111b]/60 hover:bg-[#f9f9f9]/20 flex items-center justify-center transition-all duration-200">
-            <Users size={20} className="text-[#f9f9f9]" />
+          <button className="w-12 h-12 rounded-full border-2 border-foreground bg-background/60 hover:bg-foreground/20 flex items-center justify-center transition-all duration-200">
+            <Users size={20} className="text-foreground" />
           </button>
-          <button className="w-12 h-12 rounded-full border-2 border-[#f9f9f9] bg-[#0c111b]/60 hover:bg-[#f9f9f9]/20 flex items-center justify-center transition-all duration-200">
-            <Info size={20} className="text-[#f9f9f9]" />
+          <button className="w-12 h-12 rounded-full border-2 border-foreground bg-background/60 hover:bg-foreground/20 flex items-center justify-center transition-all duration-200">
+            <Info size={20} className="text-foreground" />
           </button>
         </div>
       </div>
