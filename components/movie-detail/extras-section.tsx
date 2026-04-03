@@ -1,0 +1,77 @@
+"use client";
+
+import { Play, ChevronLeft, ChevronRight } from "lucide-react";
+
+interface Extra {
+  id: number;
+  title: string;
+  type: string;
+  duration: string;
+  thumbnail: string;
+}
+
+interface ExtrasSectionProps {
+  extras: Extra[];
+}
+
+export function ExtrasSection({ extras }: ExtrasSectionProps) {
+  if (extras.length === 0) return null;
+
+  return (
+    <section className="px-8 lg:px-16 py-8 bg-[#0c111b]">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="section-title text-[#f9f9f9]">Extras</h2>
+        <div className="flex gap-2">
+          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
+            <ChevronLeft className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          </button>
+          <button className="w-8 h-8 rounded-full bg-[#22293a] hover:bg-[#2a3144] flex items-center justify-center transition-all duration-200 group">
+            <ChevronRight className="w-5 h-5 text-[#f9f9f9]/50 group-hover:text-[#f9f9f9]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Extras Carousel */}
+      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
+        {extras.map((extra) => (
+          <div
+            key={extra.id}
+            className="flex-shrink-0 w-[280px] lg:w-[320px] cursor-pointer group"
+          >
+            {/* Thumbnail */}
+            <div className="relative aspect-video overflow-hidden rounded-lg bg-[#1a1d29] mb-3">
+              <img
+                src={extra.thumbnail}
+                alt={extra.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              
+              {/* Play overlay */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-[#f9f9f9]/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
+                  <Play className="w-6 h-6 text-[#f9f9f9] fill-[#f9f9f9] ml-1" />
+                </div>
+              </div>
+
+              {/* Duration badge */}
+              <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/80 rounded text-xs text-[#f9f9f9] font-medium">
+                {extra.duration}
+              </div>
+
+              {/* Type badge */}
+              <div className="absolute top-2 left-2 px-2 py-1 bg-[#0063e5] rounded text-xs text-[#f9f9f9] font-medium">
+                {extra.type}
+              </div>
+            </div>
+            
+            {/* Info */}
+            <h3 className="text-sm font-medium text-[#f9f9f9] group-hover:text-[#0063e5] transition-colors truncate">
+              {extra.title}
+            </h3>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
