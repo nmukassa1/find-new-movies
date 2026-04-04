@@ -59,8 +59,19 @@ export type TMDBVideo = {
 };
 
 export type TMDBVideosResponse = {
-  id: number;
-  results: TMDBVideo[];
+  id: string;
+  results: {
+    id: string;
+    iso_639_1: string;
+    iso_3166_1: string;
+    key: string;
+    name: string;
+    official: boolean;
+    published_at: string;
+    site: string;
+    size: number;
+    type: string;
+  }[];
 };
 
 // --- Paginated Response ---
@@ -69,4 +80,11 @@ export type TMDBPaginatedResponse<T> = {
   results: T[];
   total_pages: number;
   total_results: number;
+};
+
+export type TMDBUpcomingMoviesResponse = TMDBPaginatedResponse<TMDBMovie> & {
+  dates: {
+    maximum: string;
+    minimum: string;
+  };
 };

@@ -9,16 +9,25 @@ import {
   newReleases,
   originals,
 } from "@/lib/home-movie-data";
-import { getPopularMovies, getTrendingMovies } from "@/lib/tmdb/movie.service";
+import {
+  attachYouTubeTrailersToMovies,
+  getPopularMovies,
+  getTrendingMovies,
+  getUpcomingMovies,
+} from "@/lib/tmdb/movie.service";
+import MovieTrailerSection from "@/components/movie-trailer-section";
 
 export default async function MovieDirectory() {
-  const [popularMovies, trendingMovies] = await Promise.all([
+  const [popularMovies, trendingMovies, upcomingMovies] = await Promise.all([
     getPopularMovies(),
     getTrendingMovies(),
+    getUpcomingMovies(),
   ]);
 
-  console.log(popularMovies);
-
+  const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
+    upcomingMovies.results,
+  );
+  console.log(upcomingMoviesWithTrailers);
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -31,7 +40,8 @@ export default async function MovieDirectory() {
         <BrandTiles />
 
         {/* Continue Watching */}
-        <NowWatching />
+        {/* <NowWatching /> */}
+        <MovieTrailerSection trailers={upcomingMoviesWithTrailers} />
 
         {/* Popular*/}
         <MovieSection title="Popular" data={popularMovies} />
