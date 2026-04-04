@@ -9,35 +9,43 @@ import {
   newReleases,
   originals,
 } from "@/lib/home-movie-data";
+import { getPopularMovies, getTrendingMovies } from "@/lib/tmdb/movie.service";
 
-export default function MovieDirectory() {
+export default async function MovieDirectory() {
+  const [popularMovies, trendingMovies] = await Promise.all([
+    getPopularMovies(),
+    getTrendingMovies(),
+  ]);
+
+  console.log(popularMovies);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="pt-16">
         {/* Hero Section */}
         <HeroSection />
-        
+
         {/* Brand Tiles */}
         <BrandTiles />
-        
+
         {/* Continue Watching */}
         <NowWatching />
-        
-        {/* Recommended For You */}
-        <MovieSection title="Recommended For You" movies={recommended} />
-        
+
+        {/* Popular*/}
+        <MovieSection title="Popular" data={popularMovies} />
+
         {/* Trending */}
-        <MovieSection title="Trending" movies={trending} />
-        
+        <MovieSection title="Trending" data={trendingMovies} />
+
         {/* New Releases */}
-        <MovieSection title="New to Stream+" movies={newReleases} />
-        
+        {/* <MovieSection title="New to Stream+" data={newReleases} /> */}
+
         {/* Originals */}
-        <MovieSection title="Originals" movies={originals} />
+        {/* <MovieSection title="Originals" data={originals} /> */}
       </main>
-      
+
       {/* Footer spacer */}
       <div className="h-20" />
     </div>
