@@ -20,16 +20,8 @@ export function ExtrasSection({ extras }: ExtrasSectionProps) {
   return (
     <section className="px-8 lg:px-16 py-8 bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <h2 className="section-title text-foreground">Extras</h2>
-        <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
-            <ChevronLeft className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
-          </button>
-          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
-            <ChevronRight className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
-          </button>
-        </div>
       </div>
 
       {/* Extras Carousel */}
@@ -46,7 +38,7 @@ export function ExtrasSection({ extras }: ExtrasSectionProps) {
                 alt={extra.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              
+
               {/* Play overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                 <div className="w-14 h-14 rounded-full bg-foreground/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
@@ -64,7 +56,7 @@ export function ExtrasSection({ extras }: ExtrasSectionProps) {
                 {extra.type}
               </div>
             </div>
-            
+
             {/* Info */}
             <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
               {extra.title}

@@ -20,6 +20,7 @@ interface MovieHeroProps {
     rating: string;
     genres: string[];
     backdrop: string;
+    poster: string;
     logo?: string;
     trailerYoutubeKey?: string;
   };
@@ -46,8 +47,13 @@ function youtubeModalEmbedSrc(videoId: string): string {
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
+const MOBILE_MAX_WIDTH_PX = 767;
+
 export function MovieHero({ movie }: MovieHeroProps) {
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(
+    null,
+  );
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [bgMuted, setBgMuted] = useState(true);
   const [bgPlayerReady, setBgPlayerReady] = useState(false);
@@ -63,9 +69,23 @@ export function MovieHero({ movie }: MovieHeroProps) {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH_PX}px)`);
+    const sync = () => setIsMobileViewport(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   const useTrailerBg = Boolean(
-    movie.trailerYoutubeKey && !reduceMotion,
+    movie.trailerYoutubeKey && !reduceMotion && isMobileViewport === false,
   );
+
+  const heroStillSrc = useTrailerBg
+    ? movie.backdrop
+    : isMobileViewport === true
+      ? movie.poster
+      : movie.backdrop;
 
   useEffect(() => {
     if (!useTrailerBg || !movie.trailerYoutubeKey || !bgMountRef.current) {
@@ -134,28 +154,25 @@ export function MovieHero({ movie }: MovieHeroProps) {
     setTrailerOpen(true);
   }, [movie.trailerYoutubeKey]);
 
-  const onTrailerOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        setTrailerOpen(false);
-        try {
-          const p = bgPlayerRef.current;
-          if (p) {
-            p.mute();
-            p.playVideo();
-          }
-        } catch {
-          /* noop */
+  const onTrailerOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      setTrailerOpen(false);
+      try {
+        const p = bgPlayerRef.current;
+        if (p) {
+          p.mute();
+          p.playVideo();
         }
-        setBgMuted(true);
+      } catch {
+        /* noop */
       }
-    },
-    [],
-  );
+      setBgMuted(true);
+    }
+  }, []);
 
   const toggleBgMute = useCallback(() => {
     const p = bgPlayerRef.current;
-    if (!p || !bgPlayerReady) return;
+    if (!p || !bgPlayerReady || !useTrailerBg) return;
     try {
       if (p.isMuted()) {
         p.unMute();
@@ -167,7 +184,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
     } catch {
       /* noop */
     }
-  }, [bgPlayerReady]);
+  }, [bgPlayerReady, useTrailerBg]);
 
   const hasTrailer = Boolean(movie.trailerYoutubeKey);
 
@@ -177,7 +194,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
         {useTrailerBg && movie.trailerYoutubeKey ? (
           <>
             <img
-              src={movie.backdrop}
+              src={heroStillSrc}
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
               aria-hidden
@@ -195,7 +212,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
           </>
         ) : (
           <img
-            src={movie.backdrop}
+            src={heroStillSrc}
             alt={movie.title}
             className="h-full w-full object-cover"
           />
@@ -211,7 +228,7 @@ export function MovieHero({ movie }: MovieHeroProps) {
             <img
               src={movie.logo}
               alt={movie.title}
-              className="max-w-md h-auto"
+              className="md:-w-md w-[54%]  h-auto"
             />
           ) : (
             <h1 className="text-5xl lg:text-7xl font-bold text-foreground tracking-tight">
@@ -297,7 +314,9 @@ export function MovieHero({ movie }: MovieHeroProps) {
                 <Volume2 className="w-6 h-6 text-foreground" aria-hidden />
               )}
               <span className="sr-only">
-                {bgMuted ? "Unmute background trailer" : "Mute background trailer"}
+                {bgMuted
+                  ? "Unmute background trailer"
+                  : "Mute background trailer"}
               </span>
             </button>
           </div>

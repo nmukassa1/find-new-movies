@@ -20,16 +20,8 @@ export function RelatedMovies({ movies }: RelatedMoviesProps) {
   return (
     <section className="px-8 lg:px-16 py-8 bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className=" mb-4">
         <h2 className="section-title text-foreground">More Like This</h2>
-        <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
-            <ChevronLeft className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
-          </button>
-          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
-            <ChevronRight className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
-          </button>
-        </div>
       </div>
 
       {/* Movies Carousel */}
@@ -50,10 +42,12 @@ export function RelatedMovies({ movies }: RelatedMoviesProps) {
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300" />
             </div>
-            
+
             {/* Movie info below poster */}
             <div className="pt-3 pb-1">
-              <h3 className="text-foreground text-sm font-medium truncate">{movie.title}</h3>
+              <h3 className="text-foreground text-sm font-medium truncate">
+                {movie.title}
+              </h3>
               <div className="flex items-center gap-1 mt-1 text-xs text-foreground/50">
                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                 <span>{movie.rating}</span>

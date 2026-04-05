@@ -73,6 +73,8 @@ export type MovieHeroViewModel = {
   rating: string;
   genres: string[];
   backdrop: string;
+  /** Poster art — used as hero still on narrow viewports */
+  poster: string;
   logo?: string;
   /** YouTube video id for muted autoplay background */
   trailerYoutubeKey?: string;
@@ -82,6 +84,7 @@ export function mapMovieHero(d: TMDBMovieDetailsAppended): MovieHeroViewModel {
   const backdrop = d.backdrop_path
     ? tmdbFile("w1280", d.backdrop_path)
     : tmdbFile("w780", d.poster_path);
+  const poster = tmdbFile("w780", d.poster_path);
 
   return {
     title: d.title || d.original_title,
@@ -91,6 +94,7 @@ export function mapMovieHero(d: TMDBMovieDetailsAppended): MovieHeroViewModel {
     rating: usCertification(d),
     genres: (d.genres ?? []).map((g) => g.name),
     backdrop,
+    poster,
     logo: pickLogoUrl(d),
     trailerYoutubeKey: pickHeroTrailerKey(d),
   };
