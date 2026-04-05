@@ -88,3 +88,57 @@ export type TMDBUpcomingMoviesResponse = TMDBPaginatedResponse<TMDBMovie> & {
     minimum: string;
   };
 };
+
+// --- Credits ---
+export type TMDBCastCredit = {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  cast_id?: number;
+  credit_id: string;
+  order: number;
+};
+
+export type TMDBCrewCredit = {
+  id: number;
+  name: string;
+  job: string;
+  department?: string;
+  credit_id?: string;
+};
+
+export type TMDBCredits = {
+  cast: TMDBCastCredit[];
+  crew: TMDBCrewCredit[];
+};
+
+// --- Release dates (certifications) ---
+export type TMDBReleaseDateItem = {
+  certification: string;
+  iso_639_1: string;
+  release_date: string;
+  type?: number;
+  note?: string;
+};
+
+export type TMDBCountryReleaseDates = {
+  iso_3166_1: string;
+  release_dates: TMDBReleaseDateItem[];
+};
+
+export type TMDBReleaseDatesBlock = {
+  results: TMDBCountryReleaseDates[];
+};
+
+/** Movie details + `append_to_response` payloads from getMovieDetails */
+export type TMDBMovieDetailsAppended = TMDBMovieDetails & {
+  production_companies?: { id: number; name: string }[];
+  spoken_languages?: { english_name: string; iso_639_1: string; name: string }[];
+  videos?: { results: TMDBVideo[] };
+  images?: TMDBImagesResponse;
+  credits?: TMDBCredits;
+  recommendations?: TMDBPaginatedResponse<TMDBMovie>;
+  similar?: TMDBPaginatedResponse<TMDBMovie>;
+  release_dates?: TMDBReleaseDatesBlock;
+};

@@ -51,13 +51,17 @@ export function MovieHero({ movie }: MovieHeroProps) {
           )}
 
           {/* Tagline */}
-          <p className="text-xl lg:text-2xl text-foreground/80 italic">
-            {movie.tagline}
-          </p>
+          {movie.tagline ? (
+            <p className="text-xl lg:text-2xl text-foreground/80 italic">
+              {movie.tagline}
+            </p>
+          ) : null}
 
           {/* Metadata */}
           <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/70">
-            <span className="font-semibold text-foreground">{movie.year}</span>
+            <span className="font-semibold text-foreground">
+              {movie.year > 0 ? movie.year : "TBA"}
+            </span>
             <span className="w-1 h-1 rounded-full bg-foreground/40" />
             <span>{movie.runtime}</span>
             <span className="w-1 h-1 rounded-full bg-foreground/40" />

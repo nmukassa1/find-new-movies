@@ -27,11 +27,8 @@ export default async function MovieDirectory() {
   const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
     upcomingMovies.results,
   );
-  console.log(upcomingMoviesWithTrailers);
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-
       <main className="pt-16">
         {/* Hero Section */}
         <HeroSection />

@@ -20,14 +20,6 @@ export function MovieSection({ title, data }: MovieSectionProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="section-title text-foreground">{title}</h2>
-        {/* <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
-            <ChevronLeft className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
-          </button>
-          <button className="w-8 h-8 rounded-full bg-muted hover:bg-border flex items-center justify-center transition-all duration-200 group">
-            <ChevronRight className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
-          </button>
-        </div> */}
       </div>
 
       {/* Movie Carousel */}

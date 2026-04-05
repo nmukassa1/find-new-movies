@@ -3,7 +3,7 @@
 import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Extra {
-  id: number;
+  id: string;
   title: string;
   type: string;
   duration: string;

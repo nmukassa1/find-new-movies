@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CastMember {
-  id: number;
+  creditId: string;
   name: string;
   character: string;
   photo: string;
@@ -30,7 +30,7 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
           <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">Writers</h3>
           <p className="text-foreground">
             {writers.map((writer, index) => (
-              <span key={writer}>
+              <span key={`${writer}-${index}`}>
                 <span className="hover:text-primary cursor-pointer transition-colors">
                   {writer}
                 </span>
@@ -58,7 +58,7 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
       <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
         {cast.map((member) => (
           <div
-            key={member.id}
+            key={member.creditId}
             className="flex-shrink-0 w-[140px] cursor-pointer group"
           >
             {/* Photo */}

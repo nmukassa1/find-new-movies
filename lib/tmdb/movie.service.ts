@@ -2,6 +2,7 @@ import { tmdbFetch } from "./tmdb-client";
 import { TMDB_ENDPOINTS } from "./endpoints";
 import {
   TMDBMovie,
+  TMDBMovieDetailsAppended,
   TMDBPaginatedResponse,
   TMDBUpcomingMoviesResponse,
   TMDBVideo,
@@ -57,8 +58,10 @@ export function getNowPlayingMovies(
 }
 
 // Movie Details (Appended Data)
-export function getMovieDetails(movieId: number) {
-  return tmdbFetch(
+export function getMovieDetails(
+  movieId: number,
+): Promise<TMDBMovieDetailsAppended> {
+  return tmdbFetch<TMDBMovieDetailsAppended>(
     TMDB_ENDPOINTS.movieDetails(movieId),
     {
       append_to_response:
