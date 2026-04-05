@@ -1,21 +1,19 @@
-import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero-section";
 import { BrandTiles } from "@/components/brand-tiles";
-import { NowWatching } from "@/components/now-watching";
 import { MovieSection } from "@/components/movie-section";
 import {
-  recommended,
-  trending,
-  newReleases,
-  originals,
-} from "@/lib/home-movie-data";
-import {
   attachYouTubeTrailersToMovies,
+  getMovieDetails,
   getPopularMovies,
   getTrendingMovies,
   getUpcomingMovies,
 } from "@/lib/tmdb/movie.service";
 import MovieTrailerSection from "@/components/movie-trailer-section";
+import {
+  buildHomeHeroFromDetails,
+  buildHomeHeroListFallback,
+  pickRandomHeroMovie,
+} from "@/lib/home-hero";
 
 export default async function MovieDirectory() {
   const [popularMovies, trendingMovies, upcomingMovies] = await Promise.all([
@@ -24,6 +22,20 @@ export default async function MovieDirectory() {
     getUpcomingMovies(),
   ]);
 
+  const heroPick = pickRandomHeroMovie(
+    popularMovies.results,
+    trendingMovies.results,
+    upcomingMovies.results,
+  );
+
+  let homeHero = buildHomeHeroListFallback(heroPick);
+  try {
+    const details = await getMovieDetails(heroPick.id);
+    homeHero = buildHomeHeroFromDetails(details);
+  } catch {
+    /* keep list fallback */
+  }
+
   const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
     upcomingMovies.results,
   );
@@ -31,7 +43,7 @@ export default async function MovieDirectory() {
     <div className="min-h-screen bg-background">
       <main className="pt-16">
         {/* Hero Section */}
-        <HeroSection />
+        <HeroSection hero={homeHero} />
 
         {/* Brand Tiles */}
         <BrandTiles />

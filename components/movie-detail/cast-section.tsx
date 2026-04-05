@@ -24,7 +24,7 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
           <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">
             Director
           </h3>
-          <p className="text-foreground font-medium hover:text-primary cursor-pointer transition-colors">
+          <p className="text-foreground font-medium hover:text-primary transition-colors">
             {director}
           </p>
         </div>
@@ -35,7 +35,7 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
           <p className="text-foreground">
             {writers.map((writer, index) => (
               <span key={`${writer}-${index}`}>
-                <span className="hover:text-primary cursor-pointer transition-colors">
+                <span className="hover:text-primary transition-colors">
                   {writer}
                 </span>
                 {index < writers.length - 1 && (
@@ -55,10 +55,7 @@ export function CastSection({ cast, director, writers }: CastSectionProps) {
       {/* Cast Carousel */}
       <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
         {cast.map((member) => (
-          <div
-            key={member.creditId}
-            className="flex-shrink-0 w-[140px] cursor-pointer group"
-          >
+          <div key={member.creditId} className="flex-shrink-0 w-[140px] group">
             {/* Photo */}
             <div className="relative w-full aspect-square overflow-hidden rounded-full mb-3 bg-card border-2 border-transparent group-hover:border-foreground/40 transition-all duration-300">
               <img
