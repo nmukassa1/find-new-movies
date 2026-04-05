@@ -168,8 +168,8 @@ export function HeroSection({ hero }: HeroSectionProps) {
   return (
     <section
       className={cn(
-        "relative w-full overflow-hidden",
-        "mx-3 mt-2 rounded-2xl md:mx-0 md:mt-0 md:rounded-none",
+        "relative overflow-hidden",
+        "mx-3 mt-2 w-[calc(100%-1.5rem)] max-w-full rounded-2xl md:mx-0 md:mt-0 md:w-full md:max-w-none md:rounded-none",
         "h-[72vh] min-h-[480px] max-h-[720px] md:h-[500px] md:max-h-none md:min-h-0 lg:h-[600px]",
       )}
     >
