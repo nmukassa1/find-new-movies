@@ -1,7 +1,15 @@
 "use client";
 
 import { Play, Plus, Users, Info, Volume2, VolumeX } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ensureYouTubeIframeAPI } from "@/lib/youtube/iframe-api";
+import { cn } from "@/lib/utils";
 
 interface MovieHeroProps {
   movie: {
@@ -17,22 +25,35 @@ interface MovieHeroProps {
   };
 }
 
-function youtubeHeroEmbedSrc(videoId: string): string {
+type BgPlayer = {
+  mute: () => void;
+  unMute: () => void;
+  isMuted: () => boolean;
+  playVideo: () => void;
+  pauseVideo: () => void;
+  destroy: () => void;
+};
+
+function youtubeModalEmbedSrc(videoId: string): string {
   const params = new URLSearchParams({
     autoplay: "1",
-    mute: "1",
-    controls: "0",
+    mute: "0",
+    controls: "1",
     playsinline: "1",
     modestbranding: "1",
     rel: "0",
-    loop: "1",
-    playlist: videoId,
   });
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
 export function MovieHero({ movie }: MovieHeroProps) {
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [trailerOpen, setTrailerOpen] = useState(false);
+  const [bgMuted, setBgMuted] = useState(true);
+  const [bgPlayerReady, setBgPlayerReady] = useState(false);
+
+  const bgPlayerRef = useRef<BgPlayer | null>(null);
+  const bgMountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -46,18 +67,114 @@ export function MovieHero({ movie }: MovieHeroProps) {
     movie.trailerYoutubeKey && !reduceMotion,
   );
 
-  const embedSrc = useMemo(
-    () =>
-      movie.trailerYoutubeKey
-        ? youtubeHeroEmbedSrc(movie.trailerYoutubeKey)
-        : null,
-    [movie.trailerYoutubeKey],
+  useEffect(() => {
+    if (!useTrailerBg || !movie.trailerYoutubeKey || !bgMountRef.current) {
+      bgPlayerRef.current = null;
+      setBgPlayerReady(false);
+      return;
+    }
+
+    const mountEl = bgMountRef.current;
+    const videoId = movie.trailerYoutubeKey;
+    if (!videoId) return;
+
+    let cancelled = false;
+
+    ensureYouTubeIframeAPI().then(() => {
+      if (cancelled || !mountEl || !window.YT?.Player) return;
+
+      bgPlayerRef.current?.destroy();
+      bgPlayerRef.current = null;
+
+      new window.YT.Player(mountEl, {
+        videoId,
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          controls: 0,
+          loop: 1,
+          playlist: videoId,
+          playsinline: 1,
+          modestbranding: 1,
+          rel: 0,
+        },
+        events: {
+          onReady: (e) => {
+            if (cancelled) return;
+            const p = e.target as unknown as BgPlayer;
+            bgPlayerRef.current = p;
+            p.mute();
+            p.playVideo();
+            setBgMuted(true);
+            setBgPlayerReady(true);
+          },
+        },
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      setBgPlayerReady(false);
+      try {
+        bgPlayerRef.current?.destroy();
+      } catch {
+        /* noop */
+      }
+      bgPlayerRef.current = null;
+    };
+  }, [useTrailerBg, movie.trailerYoutubeKey]);
+
+  const openTrailer = useCallback(() => {
+    if (!movie.trailerYoutubeKey) return;
+    try {
+      bgPlayerRef.current?.pauseVideo();
+    } catch {
+      /* noop */
+    }
+    setTrailerOpen(true);
+  }, [movie.trailerYoutubeKey]);
+
+  const onTrailerOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        setTrailerOpen(false);
+        try {
+          const p = bgPlayerRef.current;
+          if (p) {
+            p.mute();
+            p.playVideo();
+          }
+        } catch {
+          /* noop */
+        }
+        setBgMuted(true);
+      }
+    },
+    [],
   );
+
+  const toggleBgMute = useCallback(() => {
+    const p = bgPlayerRef.current;
+    if (!p || !bgPlayerReady) return;
+    try {
+      if (p.isMuted()) {
+        p.unMute();
+        setBgMuted(false);
+      } else {
+        p.mute();
+        setBgMuted(true);
+      }
+    } catch {
+      /* noop */
+    }
+  }, [bgPlayerReady]);
+
+  const hasTrailer = Boolean(movie.trailerYoutubeKey);
 
   return (
     <section className="relative h-[85vh] min-h-[600px] overflow-hidden">
       <div className="absolute inset-0">
-        {useTrailerBg && embedSrc ? (
+        {useTrailerBg && movie.trailerYoutubeKey ? (
           <>
             <img
               src={movie.backdrop}
@@ -65,15 +182,16 @@ export function MovieHero({ movie }: MovieHeroProps) {
               className="absolute inset-0 h-full w-full object-cover"
               aria-hidden
             />
-            <iframe
-              key={embedSrc}
-              title=""
-              aria-hidden
-              className="pointer-events-none absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-[100vw] min-w-[177.78vh] -translate-x-1/2 -translate-y-1/2 border-0"
-              src={embedSrc}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-            />
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div
+                className={cn(
+                  "absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-[100vw] min-w-[177.78vh] -translate-x-1/2 -translate-y-1/2",
+                  "[&_iframe]:pointer-events-none [&_iframe]:!h-full [&_iframe]:!w-full",
+                )}
+              >
+                <div ref={bgMountRef} className="h-full w-full" />
+              </div>
+            </div>
           </>
         ) : (
           <img
@@ -131,7 +249,9 @@ export function MovieHero({ movie }: MovieHeroProps) {
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <button
               type="button"
-              className="flex items-center gap-3 px-8 py-4 bg-foreground/10 backdrop-blur-sm text-foreground rounded-[4px] font-semibold text-lg border border-foreground/20 hover:bg-foreground/20 transition-all duration-200"
+              disabled={!hasTrailer}
+              onClick={openTrailer}
+              className="flex items-center gap-3 px-8 py-4 bg-foreground/10 backdrop-blur-sm text-foreground rounded-[4px] font-semibold text-lg border border-foreground/20 hover:bg-foreground/20 transition-all duration-200 disabled:pointer-events-none disabled:opacity-40"
             >
               <Play className="w-6 h-6" />
               <span>Trailer</span>
@@ -157,29 +277,58 @@ export function MovieHero({ movie }: MovieHeroProps) {
             >
               <Info className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
             </button>
+
+            <button
+              type="button"
+              disabled={!useTrailerBg || !bgPlayerReady}
+              onClick={toggleBgMute}
+              className="flex items-center justify-center w-14 h-14 rounded-full bg-muted/80 backdrop-blur-sm border-2 border-foreground/20 hover:border-foreground/60 transition-all duration-200 disabled:pointer-events-none disabled:opacity-40"
+              title={
+                useTrailerBg && bgPlayerReady
+                  ? bgMuted
+                    ? "Unmute background trailer"
+                    : "Mute background trailer"
+                  : "Background trailer unavailable"
+              }
+            >
+              {bgMuted ? (
+                <VolumeX className="w-6 h-6 text-foreground" aria-hidden />
+              ) : (
+                <Volume2 className="w-6 h-6 text-foreground" aria-hidden />
+              )}
+              <span className="sr-only">
+                {bgMuted ? "Unmute background trailer" : "Mute background trailer"}
+              </span>
+            </button>
           </div>
         </div>
-
-        <div
-          className="absolute right-8 lg:right-16 bottom-16 flex items-center justify-center w-12 h-12 rounded-full bg-muted/60 backdrop-blur-sm border border-foreground/20 text-foreground/80"
-          title={
-            useTrailerBg
-              ? "Background trailer plays muted"
-              : "Backdrop only (no trailer or reduced motion)"
-          }
-        >
-          {useTrailerBg ? (
-            <VolumeX className="w-5 h-5" aria-hidden />
-          ) : (
-            <Volume2 className="w-5 h-5 opacity-40" aria-hidden />
-          )}
-          <span className="sr-only">
-            {useTrailerBg
-              ? "Trailer playing muted in the background"
-              : "No background trailer audio"}
-          </span>
-        </div>
       </div>
+
+      <Dialog open={trailerOpen} onOpenChange={onTrailerOpenChange}>
+        <DialogContent
+          showCloseButton
+          className={cn(
+            "z-[100] max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100vw-2rem)] gap-0 overflow-hidden p-0 sm:max-w-5xl",
+          )}
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>Trailer: {movie.title}</DialogTitle>
+          </DialogHeader>
+          {movie.trailerYoutubeKey ? (
+            <div className="relative aspect-video w-full bg-black">
+              <iframe
+                key={`${movie.trailerYoutubeKey}-modal`}
+                title={`Trailer: ${movie.title}`}
+                src={youtubeModalEmbedSrc(movie.trailerYoutubeKey)}
+                className="absolute inset-0 h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen; web-share"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
