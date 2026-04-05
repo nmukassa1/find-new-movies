@@ -44,6 +44,27 @@ function pickLogoUrl(d: TMDBMovieDetailsAppended): string | undefined {
   return path ? tmdbFile("w500", path) : undefined;
 }
 
+function isYoutubeTrailer(v: TMDBVideo): boolean {
+  return (
+    v.site?.toLowerCase() === "youtube" &&
+    v.type?.toLowerCase() === "trailer" &&
+    Boolean(v.key)
+  );
+}
+
+/** First official YouTube trailer when possible, else first YouTube trailer. */
+function pickHeroTrailerKey(d: TMDBMovieDetailsAppended): string | undefined {
+  const candidates = (d.videos?.results ?? []).filter(isYoutubeTrailer);
+  if (!candidates.length) return undefined;
+  const official = candidates.filter((v) => v.official);
+  const pool = official.length ? official : candidates;
+  const sorted = [...pool].sort((a, b) => {
+    if (a.official !== b.official) return a.official ? -1 : 1;
+    return (b.size ?? 0) - (a.size ?? 0);
+  });
+  return sorted[0]?.key;
+}
+
 export type MovieHeroViewModel = {
   title: string;
   tagline: string;
@@ -53,6 +74,8 @@ export type MovieHeroViewModel = {
   genres: string[];
   backdrop: string;
   logo?: string;
+  /** YouTube video id for muted autoplay background */
+  trailerYoutubeKey?: string;
 };
 
 export function mapMovieHero(d: TMDBMovieDetailsAppended): MovieHeroViewModel {
@@ -69,6 +92,7 @@ export function mapMovieHero(d: TMDBMovieDetailsAppended): MovieHeroViewModel {
     genres: (d.genres ?? []).map((g) => g.name),
     backdrop,
     logo: pickLogoUrl(d),
+    trailerYoutubeKey: pickHeroTrailerKey(d),
   };
 }
 
