@@ -20,6 +20,7 @@ export function MovieSection({ title, data }: MovieSectionProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="section-title text-foreground">{title}</h2>
+        <Link href="#">View All</Link>
       </div>
 
       {/* Movie Carousel */}
