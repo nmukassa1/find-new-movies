@@ -113,6 +113,42 @@ export function discoverMovies(params: Record<string, string | number>) {
   return tmdbFetch(TMDB_ENDPOINTS.discoverMovies, params);
 }
 
+/** TMDB genre ids: https://developer.themoviedb.org/reference/genre-movie-list */
+export function discoverMoviesByGenre(
+  genreIds: number | number[],
+  region: "US" | "GB" = "US",
+): Promise<TMDBPaginatedResponse<TMDBMovie>> {
+  // TMDB expects a comma-separated list for multiple genres
+  const withGenres = Array.isArray(genreIds) ? genreIds.join(",") : genreIds;
+  return tmdbFetch(TMDB_ENDPOINTS.discoverMovies, {
+    with_genres: withGenres,
+    sort_by: "popularity.desc",
+    region,
+  });
+}
+
+export function discoverMoviesByReleaseYear(
+  year: number,
+  region: "US" | "GB" = "US",
+): Promise<TMDBPaginatedResponse<TMDBMovie>> {
+  return tmdbFetch(TMDB_ENDPOINTS.discoverMovies, {
+    primary_release_year: year,
+    sort_by: "popularity.desc",
+    region,
+  });
+}
+
+export function discoverHighlyRatedMovies(
+  region: "US" | "GB" = "US",
+): Promise<TMDBPaginatedResponse<TMDBMovie>> {
+  return tmdbFetch(TMDB_ENDPOINTS.discoverMovies, {
+    sort_by: "vote_average.desc",
+    "vote_average.gte": 7,
+    "vote_count.gte": 250,
+    region,
+  });
+}
+
 // Watch Providers
 export function getWatchProviders(movieId: number) {
   return tmdbFetch(TMDB_ENDPOINTS.movieWatchProviders(movieId));
@@ -156,9 +192,7 @@ export async function attachYouTubeTrailersToMovies<T extends { id: number }>(
   if (movies.length === 0) return [];
 
   const videosByIndex = await Promise.all(
-    movies.map((movie) =>
-      getMovieVideos(movie.id).then(filterYouTubeTrailers),
-    ),
+    movies.map((movie) => getMovieVideos(movie.id).then(filterYouTubeTrailers)),
   );
 
   return movies.map((movie, index) => ({
