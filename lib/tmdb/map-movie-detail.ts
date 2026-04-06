@@ -190,6 +190,7 @@ export type ExtraViewModel = {
   type: string;
   duration: string;
   thumbnail: string;
+  youtubeKey: string;
 };
 
 export function mapExtras(d: TMDBMovieDetailsAppended): ExtraViewModel[] {
@@ -202,6 +203,7 @@ export function mapExtras(d: TMDBMovieDetailsAppended): ExtraViewModel[] {
       type: v.type,
       duration: "—",
       thumbnail: `https://img.youtube.com/vi/${v.key}/hqdefault.jpg`,
+      youtubeKey: v.key,
     }));
 }
 
