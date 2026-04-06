@@ -1,35 +1,58 @@
 # find-new-movies
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+**Next.js App Router + TypeScript movie app backed by TMDB**, with a thin API layer, ISR-style caching, and a componentized UI.
 
-## Built with v0
+Browse trending and categorized lists, open movie detail pages with cast and related titles, and watch trailers via the YouTube IFrame API. Data is fetched on the server through a small TMDB client (`lib/tmdb`) with time-based revalidation, and raw API shapes are mapped into props for presentational components.
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+## Tech stack
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_YaZDvR2ThAzazzOJwPyQa5yCvuvO)
+- **Framework:** [Next.js](https://nextjs.org) (App Router), React 19
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS, UI primitives (Radix-style `components/ui`)
+- **Data:** [The Movie Database (TMDB)](https://www.themoviedb.org/) API v3
+- **Analytics:** [Vercel Analytics](https://vercel.com/analytics)
 
-## Getting Started
+## Prerequisites
 
-First, run the development server:
+- Node.js 20+ (LTS recommended for Next.js 16)
+- A TMDB API key with **Bearer** auth (see [TMDB API settings](https://www.themoviedb.org/settings/api))
+
+## Environment variables
+
+Create a `.env.local` (or `.env`) in the project root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+TMDB_API_KEY=your_tmdb_bearer_token
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app sends this value as `Authorization: Bearer …` in `lib/tmdb/tmdb-client.ts`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting started
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+Other scripts:
+
+```bash
+npm run build   # production build
+npm run start   # run production server
+npm run lint    # ESLint
+```
+
+## Development notes
+
+This project was initially bootstrapped with [v0](https://v0.app). The repository may still be linked for design iteration; merges to `main` can deploy automatically depending on your Vercel setup.
+
+[Continue on v0 →](https://v0.app/chat/projects/prj_YaZDvR2ThAzazzOJwPyQa5yCvuvO)
 
 <a href="https://v0.app/chat/api/kiro/clone/nmukassa1/find-new-movies" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+
+## Learn more
+
+- [Next.js documentation](https://nextjs.org/docs)
+- [TMDB API](https://developer.themoviedb.org/docs)
