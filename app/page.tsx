@@ -43,7 +43,7 @@ export default async function MovieDirectory() {
     <div className="min-h-screen bg-background">
       <main className="pt-16">
         {/* Hero Section */}
-        {/* <HeroSection hero={homeHero} /> */}
+        <HeroSection hero={homeHero} />
 
         {/* Brand Tiles */}
         <BrandTiles />
