@@ -12,23 +12,31 @@ import {
 // Popular Movies
 export function getPopularMovies(
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
   return tmdbFetch(TMDB_ENDPOINTS.popular, {
     region,
+    page,
   });
 }
 
 // Trending Movies
-export function getTrendingMovies(): Promise<TMDBPaginatedResponse<TMDBMovie>> {
-  return tmdbFetch(TMDB_ENDPOINTS.trending);
+export function getTrendingMovies(
+  page = 1,
+): Promise<TMDBPaginatedResponse<TMDBMovie>> {
+  return tmdbFetch(TMDB_ENDPOINTS.trending, {
+    page,
+  });
 }
 
 // Top Rated Movies
 export function getTopRatedMovies(
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
   return tmdbFetch(TMDB_ENDPOINTS.topRated, {
     region,
+    page,
   });
 }
 
@@ -51,9 +59,11 @@ export async function getUpcomingMovies(
 // Now Playing
 export function getNowPlayingMovies(
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
   return tmdbFetch(TMDB_ENDPOINTS.nowPlaying, {
     region,
+    page,
   });
 }
 
@@ -117,6 +127,7 @@ export function discoverMovies(params: Record<string, string | number>) {
 export function discoverMoviesByGenre(
   genreIds: number | number[],
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
   // TMDB expects a comma-separated list for multiple genres
   const withGenres = Array.isArray(genreIds) ? genreIds.join(",") : genreIds;
@@ -124,28 +135,33 @@ export function discoverMoviesByGenre(
     with_genres: withGenres,
     sort_by: "popularity.desc",
     region,
+    page,
   });
 }
 
 export function discoverMoviesByReleaseYear(
   year: number,
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
   return tmdbFetch(TMDB_ENDPOINTS.discoverMovies, {
     primary_release_year: year,
     sort_by: "popularity.desc",
     region,
+    page,
   });
 }
 
 export function discoverHighlyRatedMovies(
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
   return tmdbFetch(TMDB_ENDPOINTS.discoverMovies, {
     sort_by: "vote_average.desc",
     "vote_average.gte": 7,
     "vote_count.gte": 250,
     region,
+    page,
   });
 }
 

@@ -3,7 +3,6 @@ import { BrandTiles } from "@/components/brand-tiles";
 import { MovieSection } from "@/components/movie-section";
 import {
   attachYouTubeTrailersToMovies,
-  discoverHighlyRatedMovies,
   discoverMoviesByGenre,
   discoverMoviesByReleaseYear,
   getMovieDetails,
@@ -13,6 +12,8 @@ import {
   getTrendingMovies,
   getUpcomingMovies,
 } from "@/lib/tmdb/movie.service";
+import { browsePath } from "@/lib/browse";
+import { getHomeFeatureYear } from "@/lib/home-feature-year";
 import MovieTrailerSection from "@/components/movie-trailer-section";
 import {
   buildHomeHeroFromDetails,
@@ -21,23 +22,7 @@ import {
 } from "@/lib/home-hero";
 import { TMDB_MOVIE_GENRES } from "@/lib/tmdb/movie-genres";
 
-const HOME_FEATURE_YEAR = (() => {
-  const startYear = 1990;
-  const endYear = new Date().getFullYear();
-  // Use the current date to pick a repeatable pseudo-random year each day
-  const today = new Date();
-  // Generate a deterministic seed from the date (YYYY-MM-DD as string)
-  const seedStr = today.toISOString().slice(0, 10);
-  let hash = 0;
-  for (let i = 0; i < seedStr.length; i++) {
-    hash = (hash << 5) - hash + seedStr.charCodeAt(i);
-    hash |= 0; // Convert to 32bit int
-  }
-  // Generate pseudo-random number between 0 and (endYear - startYear)
-  const yearRange = endYear - startYear + 1;
-  const pseudoRandom = Math.abs(hash) % yearRange;
-  return startYear + pseudoRandom;
-})();
+const HOME_FEATURE_YEAR = getHomeFeatureYear();
 
 export default async function MovieDirectory() {
   const [
@@ -49,7 +34,6 @@ export default async function MovieDirectory() {
     actionMovies,
     comedyMovies,
     bestOfYearMovies,
-    highlyRatedDiscover,
   ] = await Promise.all([
     getPopularMovies(),
     getTrendingMovies(),
@@ -63,7 +47,6 @@ export default async function MovieDirectory() {
       TMDB_MOVIE_GENRES.Romance,
     ]),
     discoverMoviesByReleaseYear(HOME_FEATURE_YEAR),
-    discoverHighlyRatedMovies(),
   ]);
 
   const heroPick = pickRandomHeroMovie(
@@ -93,21 +76,46 @@ export default async function MovieDirectory() {
 
         <MovieTrailerSection trailers={upcomingMoviesWithTrailers} />
 
-        <MovieSection title="Popular" data={popularMovies} />
+        <MovieSection
+          title="Popular"
+          data={popularMovies}
+          viewAllHref={browsePath("popular")}
+        />
 
-        <MovieSection title="Trending" data={trendingMovies} />
+        <MovieSection
+          title="Trending"
+          data={trendingMovies}
+          viewAllHref={browsePath("trending")}
+        />
 
-        <MovieSection title="Top rated" data={topRatedMovies} />
+        <MovieSection
+          title="Top rated"
+          data={topRatedMovies}
+          viewAllHref={browsePath("top-rated")}
+        />
 
-        <MovieSection title="Now playing" data={nowPlayingMovies} />
+        <MovieSection
+          title="Now playing"
+          data={nowPlayingMovies}
+          viewAllHref={browsePath("now-playing")}
+        />
 
-        <MovieSection title="Action" data={actionMovies} />
+        <MovieSection
+          title="Action"
+          data={actionMovies}
+          viewAllHref={browsePath("action")}
+        />
 
-        <MovieSection title="Comedy" data={comedyMovies} />
+        <MovieSection
+          title="Comedy"
+          data={comedyMovies}
+          viewAllHref={browsePath("comedy")}
+        />
 
         <MovieSection
           title={`Best of ${HOME_FEATURE_YEAR}`}
           data={bestOfYearMovies}
+          viewAllHref={browsePath("best-of-year")}
         />
       </main>
 
