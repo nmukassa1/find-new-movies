@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import { cache } from "react";
 
 import { HeroSection } from "@/components/hero-section";
