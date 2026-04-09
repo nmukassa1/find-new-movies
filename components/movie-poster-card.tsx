@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { TMDBMovie } from "@/types/tmdb";
+import { tmdbPosterSrc } from "@/lib/tmdb/tmdb-poster";
 import { cn } from "@/lib/utils";
 
 type MoviePosterCardProps = {
@@ -14,6 +15,8 @@ export function MoviePosterCard({
   className,
   imageLoading = "lazy",
 }: MoviePosterCardProps) {
+  const posterSrc = tmdbPosterSrc(movie.poster_path);
+
   return (
     <Link
       href={`/movie/${movie.id}`}
@@ -23,16 +26,24 @@ export function MoviePosterCard({
       )}
     >
       <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-card">
-        <Image
-          src={
-            "https://image.tmdb.org/t/p/original" + (movie.poster_path ?? "")
-          }
-          alt={movie.title}
-          className="w-full h-full object-cover"
-          width={180}
-          height={270}
-          loading={imageLoading}
-        />
+        {posterSrc ? (
+          <Image
+            src={posterSrc}
+            alt={movie.title}
+            className="w-full h-full object-cover"
+            width={180}
+            height={270}
+            loading={imageLoading}
+            sizes="(max-width: 1024px) 140px, 180px"
+          />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center bg-muted px-2 text-center text-xs text-muted-foreground"
+            aria-hidden
+          >
+            No poster
+          </div>
+        )}
         <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300" />
       </div>
       <div className="pt-3 pb-1">

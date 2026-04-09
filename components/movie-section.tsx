@@ -29,7 +29,6 @@ export function MovieSection({ title, data, viewAllHref }: MovieSectionProps) {
           <MoviePosterCard
             key={movie.id}
             movie={movie}
-            imageLoading="eager"
             className="w-[140px] lg:w-[180px]"
           />
         ))}

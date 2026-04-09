@@ -22,7 +22,8 @@ import {
 } from "@/lib/home-hero";
 import { TMDB_MOVIE_GENRES } from "@/lib/tmdb/movie-genres";
 
-export const dynamic = "force-dynamic";
+/** Cache home HTML for a few minutes to cut TTFB and payload churn on repeat visits (TMDB data does not need to be per-request fresh). */
+export const revalidate = 300;
 
 // Year label and TMDB query for the "Best of" home row.
 const HOME_FEATURE_YEAR = getHomeFeatureYear();

@@ -201,20 +201,45 @@ export function filterYouTubeTrailers(
   };
 }
 
-/** Fetches YouTube trailers for each movie in parallel. Works with any list that has TMDB `id` (popular, upcoming, discover-by-genre, recommendations, etc.). One failed request does not fail the whole batch. */
+const TRAILER_VIDEOS_CONCURRENCY = 5;
+
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  mapper: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+
+  async function worker(): Promise<void> {
+    for (;;) {
+      const i = next++;
+      if (i >= items.length) return;
+      results[i] = await mapper(items[i]!, i);
+    }
+  }
+
+  const n = Math.min(concurrency, items.length);
+  await Promise.all(Array.from({ length: n }, () => worker()));
+  return results;
+}
+
+/** Fetches YouTube trailers with limited concurrency to avoid server/memory spikes. One failed request does not fail the batch. */
 export async function attachYouTubeTrailersToMovies<T extends { id: number }>(
   movies: T[],
 ): Promise<Array<{ movie: T; trailers: TMDBVideo[] }>> {
   if (movies.length === 0) return [];
 
-  const videosByIndex = await Promise.all(
-    movies.map(async (movie) => {
+  const videosByIndex = await mapWithConcurrency(
+    movies,
+    TRAILER_VIDEOS_CONCURRENCY,
+    async (movie) => {
       try {
         return filterYouTubeTrailers(await getMovieVideos(movie.id));
       } catch {
         return { id: String(movie.id), results: [] as TMDBVideo[] };
       }
-    }),
+    },
   );
 
   return movies.map((movie, index) => ({
