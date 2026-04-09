@@ -201,18 +201,24 @@ export function filterYouTubeTrailers(
   };
 }
 
-/** Fetches YouTube trailers for each movie in parallel. Works with any list that has TMDB `id` (popular, upcoming, discover-by-genre, recommendations, etc.). */
+/** Fetches YouTube trailers for each movie in parallel. Works with any list that has TMDB `id` (popular, upcoming, discover-by-genre, recommendations, etc.). One failed request does not fail the whole batch. */
 export async function attachYouTubeTrailersToMovies<T extends { id: number }>(
   movies: T[],
 ): Promise<Array<{ movie: T; trailers: TMDBVideo[] }>> {
   if (movies.length === 0) return [];
 
   const videosByIndex = await Promise.all(
-    movies.map((movie) => getMovieVideos(movie.id).then(filterYouTubeTrailers)),
+    movies.map(async (movie) => {
+      try {
+        return filterYouTubeTrailers(await getMovieVideos(movie.id));
+      } catch {
+        return { id: String(movie.id), results: [] as TMDBVideo[] };
+      }
+    }),
   );
 
   return movies.map((movie, index) => ({
     movie,
-    trailers: videosByIndex[index].results,
+    trailers: videosByIndex[index]!.results,
   }));
 }

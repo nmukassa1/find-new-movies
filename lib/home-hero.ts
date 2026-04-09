@@ -11,20 +11,17 @@ export type HomeHeroContent = MovieHeroViewModel & {
   overview: string;
 };
 
-export function pickRandomHeroMovie(
-  popular: TMDBMovie[],
-  trending: TMDBMovie[],
-  upcoming: TMDBMovie[],
-): TMDBMovie {
+/** Merges any number of lists (deduped by id) and picks one movie at random, or null if every list is empty. */
+export function pickRandomHeroMovie(...pools: TMDBMovie[][]): TMDBMovie | null {
   const byId = new Map<number, TMDBMovie>();
-  for (const m of [...popular, ...trending, ...upcoming]) {
-    byId.set(m.id, m);
+  for (const pool of pools) {
+    for (const m of pool) {
+      byId.set(m.id, m);
+    }
   }
-  const pool = [...byId.values()];
-  if (pool.length === 0) {
-    throw new Error("No movies available for home hero");
-  }
-  return pool[Math.floor(Math.random() * pool.length)]!;
+  const merged = [...byId.values()];
+  if (merged.length === 0) return null;
+  return merged[Math.floor(Math.random() * merged.length)]!;
 }
 
 export function buildHomeHeroFromDetails(
