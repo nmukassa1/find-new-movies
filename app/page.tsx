@@ -5,12 +5,15 @@ import {
   attachYouTubeTrailersToMovies,
   discoverMoviesByGenre,
   discoverMoviesByReleaseYear,
+  emptyPaginatedMovies,
+  emptyUpcomingMoviesResponse,
   getMovieDetails,
   getNowPlayingMovies,
   getPopularMovies,
   getTopRatedMovies,
   getTrendingMovies,
   getUpcomingMovies,
+  withTmdbFallback,
 } from "@/lib/tmdb/movie.service";
 import { browsePath } from "@/lib/browse";
 import { getHomeFeatureYear } from "@/lib/home-feature-year";
@@ -35,18 +38,28 @@ export default async function MovieDirectory() {
     comedyMovies,
     bestOfYearMovies,
   ] = await Promise.all([
-    getPopularMovies(),
-    getTrendingMovies(),
-    getUpcomingMovies(),
-    getTopRatedMovies(),
-    getNowPlayingMovies(),
-    discoverMoviesByGenre(TMDB_MOVIE_GENRES.Action),
-    discoverMoviesByGenre([
-      TMDB_MOVIE_GENRES.Comedy,
-      TMDB_MOVIE_GENRES.Drama,
-      TMDB_MOVIE_GENRES.Romance,
-    ]),
-    discoverMoviesByReleaseYear(HOME_FEATURE_YEAR),
+    withTmdbFallback(() => getPopularMovies(), emptyPaginatedMovies()),
+    withTmdbFallback(() => getTrendingMovies(), emptyPaginatedMovies()),
+    withTmdbFallback(() => getUpcomingMovies(), emptyUpcomingMoviesResponse()),
+    withTmdbFallback(() => getTopRatedMovies(), emptyPaginatedMovies()),
+    withTmdbFallback(() => getNowPlayingMovies(), emptyPaginatedMovies()),
+    withTmdbFallback(
+      () => discoverMoviesByGenre(TMDB_MOVIE_GENRES.Action),
+      emptyPaginatedMovies(),
+    ),
+    withTmdbFallback(
+      () =>
+        discoverMoviesByGenre([
+          TMDB_MOVIE_GENRES.Comedy,
+          TMDB_MOVIE_GENRES.Drama,
+          TMDB_MOVIE_GENRES.Romance,
+        ]),
+      emptyPaginatedMovies(),
+    ),
+    withTmdbFallback(
+      () => discoverMoviesByReleaseYear(HOME_FEATURE_YEAR),
+      emptyPaginatedMovies(),
+    ),
   ]);
 
   const heroPick = pickRandomHeroMovie(
@@ -71,8 +84,9 @@ export default async function MovieDirectory() {
     }
   }
 
-  const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
-    upcomingMovies.results,
+  const upcomingMoviesWithTrailers = await withTmdbFallback(
+    () => attachYouTubeTrailersToMovies(upcomingMovies.results ?? []),
+    [],
   );
 
   return (

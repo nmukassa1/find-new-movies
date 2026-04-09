@@ -39,7 +39,7 @@ export default async function BrowseMoviesPage({ params, searchParams }: Props) 
   if (data.total_pages > 0 && page > data.total_pages) {
     notFound();
   }
-  const movies = filterEnglishMovies(data.results);
+  const movies = filterEnglishMovies(data.results ?? []);
   const title = getBrowseTitle(slug);
 
   return (

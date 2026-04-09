@@ -2,10 +2,12 @@ import { getHomeFeatureYear } from "@/lib/home-feature-year";
 import {
   discoverMoviesByGenre,
   discoverMoviesByReleaseYear,
+  emptyPaginatedMovies,
   getNowPlayingMovies,
   getPopularMovies,
   getTopRatedMovies,
   getTrendingMovies,
+  withTmdbFallback,
 } from "@/lib/tmdb/movie.service";
 import { TMDB_MOVIE_GENRES } from "@/lib/tmdb/movie-genres";
 import { TMDBMovie, TMDBPaginatedResponse } from "@/types/tmdb";
@@ -57,37 +59,39 @@ export async function fetchBrowseMovies(
   slug: BrowseSlug,
   page: number,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
-  const region = "US" as const;
-  switch (slug) {
-    case "popular":
-      return getPopularMovies(region, page);
-    case "trending":
-      return getTrendingMovies(page);
-    case "top-rated":
-      return getTopRatedMovies(region, page);
-    case "now-playing":
-      return getNowPlayingMovies(region, page);
-    case "action":
-      return discoverMoviesByGenre(TMDB_MOVIE_GENRES.Action, region, page);
-    case "comedy":
-      return discoverMoviesByGenre(
-        [
-          TMDB_MOVIE_GENRES.Comedy,
-          TMDB_MOVIE_GENRES.Drama,
-          TMDB_MOVIE_GENRES.Romance,
-        ],
-        region,
-        page,
-      );
-    case "best-of-year":
-      return discoverMoviesByReleaseYear(
-        getHomeFeatureYear(),
-        region,
-        page,
-      );
-    default: {
-      const _exhaustive: never = slug;
-      return _exhaustive;
+  return withTmdbFallback(async () => {
+    const region = "US" as const;
+    switch (slug) {
+      case "popular":
+        return getPopularMovies(region, page);
+      case "trending":
+        return getTrendingMovies(page);
+      case "top-rated":
+        return getTopRatedMovies(region, page);
+      case "now-playing":
+        return getNowPlayingMovies(region, page);
+      case "action":
+        return discoverMoviesByGenre(TMDB_MOVIE_GENRES.Action, region, page);
+      case "comedy":
+        return discoverMoviesByGenre(
+          [
+            TMDB_MOVIE_GENRES.Comedy,
+            TMDB_MOVIE_GENRES.Drama,
+            TMDB_MOVIE_GENRES.Romance,
+          ],
+          region,
+          page,
+        );
+      case "best-of-year":
+        return discoverMoviesByReleaseYear(
+          getHomeFeatureYear(),
+          region,
+          page,
+        );
+      default: {
+        const _exhaustive: never = slug;
+        return _exhaustive;
+      }
     }
-  }
+  }, emptyPaginatedMovies());
 }
