@@ -9,34 +9,6 @@ import {
   TMDBVideosResponse,
 } from "@/types/tmdb";
 
-export function emptyPaginatedMovies(): TMDBPaginatedResponse<TMDBMovie> {
-  return {
-    page: 1,
-    results: [],
-    total_pages: 0,
-    total_results: 0,
-  };
-}
-
-export function emptyUpcomingMoviesResponse(): TMDBUpcomingMoviesResponse {
-  return {
-    ...emptyPaginatedMovies(),
-    dates: { minimum: "1970-01-01", maximum: "2099-12-31" },
-  };
-}
-
-/** Runs a TMDB call and returns `fallback` on any rejection (network, 401, timeouts, etc.). */
-export async function withTmdbFallback<T>(
-  fn: () => Promise<T>,
-  fallback: T,
-): Promise<T> {
-  try {
-    return await fn();
-  } catch {
-    return fallback;
-  }
-}
-
 // Popular Movies
 export function getPopularMovies(
   region: "US" | "GB" = "US",
@@ -203,21 +175,17 @@ export function getConfiguration() {
   return tmdbFetch(TMDB_ENDPOINTS.configuration, {}, 86400);
 }
 
-export function filterEnglishMovies<
-  T extends { original_language?: string | null },
->(movies: T[]): T[] {
-  return movies.filter((movie) =>
-    (movie.original_language ?? "").startsWith("en"),
-  );
+export function filterEnglishMovies<T extends { original_language: string }>(
+  movies: T[],
+): T[] {
+  return movies.filter((movie) => movie.original_language.startsWith("en"));
 }
 
 export function filterUpcomingMoviesByMinDate(
   data: TMDBUpcomingMoviesResponse,
 ): TMDBMovie[] {
-  const results = data.results ?? [];
-  const minDate = data.dates?.minimum;
-  if (!minDate) return results;
-  return results.filter((movie) => (movie.release_date ?? "") >= minDate);
+  const minDate = data.dates.minimum;
+  return data.results.filter((movie) => movie.release_date >= minDate);
 }
 
 export function filterYouTubeTrailers(
@@ -225,10 +193,10 @@ export function filterYouTubeTrailers(
 ): TMDBVideosResponse {
   return {
     ...videos,
-    results: (videos.results ?? []).filter(
+    results: videos.results.filter(
       (video) =>
-        video.site?.toLowerCase() === "youtube" &&
-        video.type?.toLowerCase() === "trailer",
+        video.site.toLowerCase() === "youtube" &&
+        video.type.toLowerCase() === "trailer",
     ),
   };
 }
@@ -239,22 +207,18 @@ export async function attachYouTubeTrailersToMovies<T extends { id: number }>(
 ): Promise<Array<{ movie: T; trailers: TMDBVideo[] }>> {
   if (movies.length === 0) return [];
 
-  try {
-    const videosByIndex = await Promise.all(
-      movies.map(async (movie) => {
-        try {
-          return filterYouTubeTrailers(await getMovieVideos(movie.id));
-        } catch {
-          return { id: String(movie.id), results: [] as TMDBVideo[] };
-        }
-      }),
-    );
+  const videosByIndex = await Promise.all(
+    movies.map(async (movie) => {
+      try {
+        return filterYouTubeTrailers(await getMovieVideos(movie.id));
+      } catch {
+        return { id: String(movie.id), results: [] as TMDBVideo[] };
+      }
+    }),
+  );
 
-    return movies.map((movie, index) => ({
-      movie,
-      trailers: videosByIndex[index]!.results,
-    }));
-  } catch {
-    return movies.map((movie) => ({ movie, trailers: [] as TMDBVideo[] }));
-  }
+  return movies.map((movie, index) => ({
+    movie,
+    trailers: videosByIndex[index]!.results,
+  }));
 }
