@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { HeroSection } from "@/components/hero-section";
 import { BrandTiles } from "@/components/brand-tiles";
 import { MovieSection } from "@/components/movie-section";
@@ -22,9 +24,11 @@ import {
 } from "@/lib/home-hero";
 import { TMDB_MOVIE_GENRES } from "@/lib/tmdb/movie-genres";
 
+export const revalidate = 3600;
+
 const HOME_FEATURE_YEAR = getHomeFeatureYear();
 
-export default async function MovieDirectory() {
+const getHomePageData = cache(async () => {
   const [
     popularMovies,
     trendingMovies,
@@ -61,19 +65,49 @@ export default async function MovieDirectory() {
   );
 
   let homeHero: ReturnType<typeof buildHomeHeroListFallback> | null = null;
+
   if (heroPick) {
     homeHero = buildHomeHeroListFallback(heroPick);
+
     try {
       const details = await getMovieDetails(heroPick.id);
       homeHero = buildHomeHeroFromDetails(details);
     } catch {
-      /* keep list fallback */
+      /* keep fallback */
     }
   }
 
   const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
     upcomingMovies.results,
   );
+
+  return {
+    popularMovies,
+    trendingMovies,
+    upcomingMovies,
+    topRatedMovies,
+    nowPlayingMovies,
+    actionMovies,
+    comedyMovies,
+    bestOfYearMovies,
+    upcomingMoviesWithTrailers,
+    homeHero,
+  };
+});
+
+export default async function MovieDirectory() {
+  const {
+    popularMovies,
+    trendingMovies,
+    upcomingMovies,
+    topRatedMovies,
+    nowPlayingMovies,
+    actionMovies,
+    comedyMovies,
+    bestOfYearMovies,
+    upcomingMoviesWithTrailers,
+    homeHero,
+  } = await getHomePageData();
 
   return (
     <div className="min-h-screen bg-background">
