@@ -22,9 +22,13 @@ import {
 } from "@/lib/home-hero";
 import { TMDB_MOVIE_GENRES } from "@/lib/tmdb/movie-genres";
 
+export const dynamic = "force-dynamic";
+
+// Year label and TMDB query for the "Best of" home row.
 const HOME_FEATURE_YEAR = getHomeFeatureYear();
 
 export default async function MovieDirectory() {
+  // Load every home-page list in parallel (charts, genres, featured year).
   const [
     popularMovies,
     trendingMovies,
@@ -49,6 +53,7 @@ export default async function MovieDirectory() {
     discoverMoviesByReleaseYear(HOME_FEATURE_YEAR),
   ]);
 
+  // Pick one title from all pools to drive the hero.
   const heroPick = pickRandomHeroMovie(
     popularMovies.results,
     trendingMovies.results,
@@ -60,6 +65,7 @@ export default async function MovieDirectory() {
     bestOfYearMovies.results,
   );
 
+  // Prefer full movie details for the hero; keep list fallback if the request fails.
   let homeHero: ReturnType<typeof buildHomeHeroListFallback> | null = null;
   if (heroPick) {
     homeHero = buildHomeHeroListFallback(heroPick);
@@ -71,6 +77,7 @@ export default async function MovieDirectory() {
     }
   }
 
+  // Resolve YouTube trailer URLs for the upcoming-movies strip.
   const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
     upcomingMovies.results,
   );
@@ -78,12 +85,15 @@ export default async function MovieDirectory() {
   return (
     <div className="min-h-screen bg-background">
       <main className="pt-16">
+        {/* Featured hero plus brand / partner tiles. */}
         {homeHero ? <HeroSection hero={homeHero} /> : null}
 
         <BrandTiles />
 
+        {/* Scrollable upcoming titles with inline trailers. */}
         <MovieTrailerSection trailers={upcomingMoviesWithTrailers} />
 
+        {/* Browse rows: each links to a slug under /browse. */}
         <MovieSection
           title="Popular"
           data={popularMovies}
@@ -127,6 +137,7 @@ export default async function MovieDirectory() {
         />
       </main>
 
+      {/* Bottom padding so the last row clears the layout / nav. */}
       <div className="h-20" />
     </div>
   );
