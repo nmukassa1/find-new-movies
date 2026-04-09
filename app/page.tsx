@@ -49,27 +49,27 @@ export default async function MovieDirectory() {
     discoverMoviesByReleaseYear(HOME_FEATURE_YEAR),
   ]);
 
-  const heroPick = pickRandomHeroMovie(
-    popularMovies.results,
-    trendingMovies.results,
-    upcomingMovies.results,
-    topRatedMovies.results,
-    nowPlayingMovies.results,
-    actionMovies.results,
-    comedyMovies.results,
-    bestOfYearMovies.results,
-  );
+  // const heroPick = pickRandomHeroMovie(
+  //   popularMovies.results,
+  //   trendingMovies.results,
+  //   upcomingMovies.results,
+  //   topRatedMovies.results,
+  //   nowPlayingMovies.results,
+  //   actionMovies.results,
+  //   comedyMovies.results,
+  //   bestOfYearMovies.results,
+  // );
 
-  let homeHero: ReturnType<typeof buildHomeHeroListFallback> | null = null;
-  if (heroPick) {
-    homeHero = buildHomeHeroListFallback(heroPick);
-    try {
-      const details = await getMovieDetails(heroPick.id);
-      homeHero = buildHomeHeroFromDetails(details);
-    } catch {
-      /* keep list fallback */
-    }
-  }
+  // let homeHero: ReturnType<typeof buildHomeHeroListFallback> | null = null;
+  // if (heroPick) {
+  //   homeHero = buildHomeHeroListFallback(heroPick);
+  //   try {
+  //     const details = await getMovieDetails(heroPick.id);
+  //     homeHero = buildHomeHeroFromDetails(details);
+  //   } catch {
+  //     /* keep list fallback */
+  //   }
+  // }
 
   const upcomingMoviesWithTrailers = await attachYouTubeTrailersToMovies(
     upcomingMovies.results,
@@ -78,7 +78,7 @@ export default async function MovieDirectory() {
   return (
     <div className="min-h-screen bg-background">
       <main className="pt-16">
-        {homeHero ? <HeroSection hero={homeHero} /> : null}
+        {/* {homeHero ? <HeroSection hero={homeHero} /> : null} */}
 
         <BrandTiles />
 
