@@ -106,11 +106,25 @@ export function getSimilarMovies(movieId: number) {
   return tmdbFetch(TMDB_ENDPOINTS.movieSimilar(movieId));
 }
 
-// Search Movies
-export function searchMovies(query: string) {
-  return tmdbFetch(TMDB_ENDPOINTS.searchMovies, {
-    query,
-  });
+// Search Movies (TMDB: GET /search/movie). Results sorted by popularity (desc) for display.
+export async function searchMovies(
+  query: string,
+  options?: { page?: number; region?: "US" | "GB" },
+): Promise<TMDBPaginatedResponse<TMDBMovie>> {
+  const q = query.trim();
+  const res = await tmdbFetch<TMDBPaginatedResponse<TMDBMovie>>(
+    TMDB_ENDPOINTS.searchMovies,
+    {
+      query: q,
+      page: options?.page ?? 1,
+      region: options?.region ?? "US",
+    },
+    0,
+  );
+  return {
+    ...res,
+    results: [...res.results].sort((a, b) => b.popularity - a.popularity),
+  };
 }
 
 // Genres

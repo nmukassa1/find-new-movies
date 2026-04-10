@@ -8,18 +8,21 @@ type MoviePosterCardProps = {
   movie: TMDBMovie;
   className?: string;
   imageLoading?: "eager" | "lazy";
+  onNavigate?: () => void;
 };
 
 export function MoviePosterCard({
   movie,
   className,
   imageLoading = "lazy",
+  onNavigate,
 }: MoviePosterCardProps) {
   const posterSrc = tmdbPosterSrc(movie.poster_path);
 
   return (
     <Link
       href={`/movie/${movie.id}`}
+      onClick={onNavigate}
       className={cn(
         "disney-card flex-shrink-0 cursor-pointer rounded-lg overflow-hidden",
         className,
