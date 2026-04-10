@@ -3,9 +3,12 @@ import { Home, Tv, Film, Plus } from "lucide-react";
 import { HEADER_NAV_ITEM_CLASSNAME } from "./constants";
 import { SiteSearchDialog } from "./site-search-dialog";
 
-export function HeaderDesktopNav() {
+export function HeaderNav() {
   return (
-    <nav className="hidden md:flex items-center gap-6">
+    <nav
+      className="hidden items-center gap-6 md:flex"
+      aria-label="Main navigation"
+    >
       <Link href="/" className={HEADER_NAV_ITEM_CLASSNAME}>
         <Home size={18} />
         <span className="text-[13px] font-medium tracking-wide uppercase">

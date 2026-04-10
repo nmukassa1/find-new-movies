@@ -6,14 +6,30 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { MoviePosterCard } from "@/components/movie-poster-card";
-import { HEADER_NAV_ITEM_CLASSNAME } from "./constants";
+import {
+  HEADER_MOBILE_BAR_ICON_BUTTON_CLASSNAME,
+  HEADER_NAV_ITEM_CLASSNAME,
+} from "./constants";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import type { TMDBMovie, TMDBPaginatedResponse } from "@/types/tmdb";
 
 const SEARCH_DEBOUNCE_MS = 320;
 const MIN_QUERY_CHARS = 2;
 
-export function SiteSearchDialog() {
+export type SiteSearchDialogProps = {
+  /** Override default trigger styling. */
+  triggerClassName?: string;
+  /** Run before opening search (e.g. close another overlay). */
+  onBeforeOpen?: () => void;
+  /** Compact icon button for the mobile header bar. */
+  variant?: "default" | "iconOnly";
+};
+
+export function SiteSearchDialog({
+  triggerClassName,
+  onBeforeOpen,
+  variant = "default",
+}: SiteSearchDialogProps = {}) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
@@ -98,20 +114,35 @@ export function SiteSearchDialog() {
   const showGrid =
     !loading && movies !== null && movies.length > 0 && trimmedLen >= MIN_QUERY_CHARS;
 
+  const triggerBaseClass =
+    variant === "iconOnly"
+      ? (triggerClassName ?? HEADER_MOBILE_BAR_ICON_BUTTON_CLASSNAME)
+      : (triggerClassName ?? HEADER_NAV_ITEM_CLASSNAME);
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <button
         type="button"
-        className={HEADER_NAV_ITEM_CLASSNAME}
-        onClick={() => setOpen(true)}
+        className={triggerBaseClass}
+        onClick={() => {
+          onBeforeOpen?.();
+          queueMicrotask(() => setOpen(true));
+        }}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls="site-search-dialog"
+        aria-label={variant === "iconOnly" ? "Search movies" : undefined}
       >
-        <Search size={18} />
-        <span className="cursor-pointer text-[13px] font-medium tracking-wide uppercase">
-          Search
-        </span>
+        {variant === "iconOnly" ? (
+          <Search size={20} strokeWidth={2} aria-hidden />
+        ) : (
+          <Search size={18} aria-hidden />
+        )}
+        {variant === "default" ? (
+          <span className="cursor-pointer text-[13px] font-medium tracking-wide uppercase">
+            Search
+          </span>
+        ) : null}
       </button>
       <DialogContent
         id="site-search-dialog"
