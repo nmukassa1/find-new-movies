@@ -1,5 +1,4 @@
 import { HeroSection } from "@/components/hero-section";
-import { BrandTiles } from "@/components/brand-tiles";
 import { MovieSection } from "@/components/movie-section";
 import MovieTrailerSection from "@/components/movie-trailer-section";
 import { browsePath } from "@/lib/browse";
@@ -23,8 +22,6 @@ export async function HomePage() {
     <div className="min-h-screen bg-background">
       <main className="pt-16">
         {homeHero ? <HeroSection hero={homeHero} /> : null}
-
-        <BrandTiles />
 
         <MovieTrailerSection trailers={upcomingMoviesWithTrailers} />
 
