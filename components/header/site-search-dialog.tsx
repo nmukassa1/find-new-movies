@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Film, Search, Tv } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -11,6 +11,7 @@ import {
   HEADER_NAV_ITEM_CLASSNAME,
 } from "./constants";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { mergeMovieAndTvSearchResults } from "@/lib/search/merge-search-results";
 import type { TMDBMovie, TMDBPaginatedResponse, TMDBTV } from "@/types/tmdb";
 
 const SEARCH_DEBOUNCE_MS = 320;
@@ -142,16 +143,19 @@ export function SiteSearchDialog({
   }, [debouncedQuery, open]);
 
   const trimmedLen = debouncedQuery.trim().length;
+  const trimmedQuery = debouncedQuery.trim();
+  const mergedResults = useMemo(() => {
+    if (movieResults === null || tvResults === null) return null;
+    return mergeMovieAndTvSearchResults(trimmedQuery, movieResults, tvResults);
+  }, [movieResults, tvResults, trimmedQuery]);
+
   const showHint = trimmedLen > 0 && trimmedLen < MIN_QUERY_CHARS;
   const searchComplete =
     !loading &&
     trimmedLen >= MIN_QUERY_CHARS &&
-    movieResults !== null &&
-    tvResults !== null;
-  const showEmpty =
-    searchComplete && movieResults.length === 0 && tvResults.length === 0;
-  const showMovieGrid = searchComplete && movieResults.length > 0;
-  const showTvGrid = searchComplete && tvResults.length > 0;
+    mergedResults !== null;
+  const showEmpty = searchComplete && mergedResults.length === 0;
+  const showGrid = searchComplete && mergedResults.length > 0;
 
   const triggerBaseClass =
     variant === "iconOnly"
@@ -236,45 +240,29 @@ export function SiteSearchDialog({
               </p>
             ) : null}
 
-            {!loading && !error && showMovieGrid ? (
-              <section className="mb-10">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-foreground/80">
-                  <Film className="size-4" aria-hidden />
-                  Movies
-                </h2>
-                <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                  {movieResults!.map((movie) => (
-                    <li key={`m-${movie.id}`} className="min-w-0">
+            {!loading && !error && showGrid && mergedResults ? (
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                {mergedResults.map((hit) =>
+                  hit.catalog === "movie" ? (
+                    <li key={`m-${hit.movie.id}`} className="min-w-0">
                       <MoviePosterCard
-                        movie={movie}
+                        movie={hit.movie}
                         className="mx-auto w-full max-w-[200px]"
                         onNavigate={() => setOpen(false)}
                       />
                     </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-
-            {!loading && !error && showTvGrid ? (
-              <section>
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-foreground/80">
-                  <Tv className="size-4" aria-hidden />
-                  TV series
-                </h2>
-                <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                  {tvResults!.map((show) => (
-                    <li key={`t-${show.id}`} className="min-w-0">
+                  ) : (
+                    <li key={`t-${hit.show.id}`} className="min-w-0">
                       <MoviePosterCard
                         kind="series"
-                        show={show}
+                        show={hit.show}
                         className="mx-auto w-full max-w-[200px]"
                         onNavigate={() => setOpen(false)}
                       />
                     </li>
-                  ))}
-                </ul>
-              </section>
+                  ),
+                )}
+              </ul>
             ) : null}
           </div>
         </div>
