@@ -72,6 +72,26 @@ export function getTvVideos(tvId: number): Promise<TMDBVideosResponse> {
   return tmdbFetch(TMDB_ENDPOINTS.tvVideos(tvId));
 }
 
+// Search TV (TMDB: GET /search/tv). Results sorted by popularity (desc) for display.
+export async function searchTv(
+  query: string,
+  options?: { page?: number },
+): Promise<TMDBPaginatedResponse<TMDBTV>> {
+  const q = query.trim();
+  const res = await tmdbFetch<TMDBPaginatedResponse<TMDBTV>>(
+    TMDB_ENDPOINTS.searchTv,
+    {
+      query: q,
+      page: options?.page ?? 1,
+    },
+    0,
+  );
+  return {
+    ...res,
+    results: [...res.results].sort((a, b) => b.popularity - a.popularity),
+  };
+}
+
 export function discoverTv(params: Record<string, string | number>) {
   return tmdbFetch(TMDB_ENDPOINTS.discoverTv, params);
 }
