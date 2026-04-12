@@ -290,7 +290,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
 
         <div className="flex flex-wrap items-center gap-4">
           <Link
-            href={`/movie/${hero.id}`}
+            href={hero.detailHref}
             className="flex items-center gap-3 rounded-[4px] bg-foreground px-8 py-4 text-sm font-semibold uppercase tracking-wider text-background transition-all duration-200 hover:bg-foreground-cta-hover"
           >
             <Play size={20} className="fill-background" />
@@ -310,7 +310,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
             <Users size={20} className="text-foreground" />
           </button>
           <Link
-            href={`/movie/${hero.id}`}
+            href={hero.detailHref}
             className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-foreground bg-background/60 transition-all duration-200 hover:bg-foreground/20"
             aria-label={`More about ${hero.title}`}
           >

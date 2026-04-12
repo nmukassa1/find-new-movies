@@ -75,7 +75,7 @@ export function HeaderMobileMenu() {
               </span>
             </Link>
             <Link
-              href="#"
+              href="/series"
               className={HEADER_MOBILE_SHEET_LINK_CLASSNAME}
               onClick={() => setSheetOpen(false)}
             >

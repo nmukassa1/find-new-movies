@@ -1,27 +1,42 @@
 import Link from "next/link";
 import Image from "next/image";
-import { TMDBMovie } from "@/types/tmdb";
+import { TMDBMovie, TMDBTV } from "@/types/tmdb";
 import { tmdbPosterSrc } from "@/lib/tmdb/tmdb-poster";
 import { cn } from "@/lib/utils";
 
 type MoviePosterCardProps = {
-  movie: TMDBMovie;
   className?: string;
   imageLoading?: "eager" | "lazy";
   onNavigate?: () => void;
-};
+} & (
+  | { kind?: "movie"; movie: TMDBMovie }
+  | { kind: "series"; show: TMDBTV }
+);
 
-export function MoviePosterCard({
-  movie,
-  className,
-  imageLoading = "lazy",
-  onNavigate,
-}: MoviePosterCardProps) {
-  const posterSrc = tmdbPosterSrc(movie.poster_path);
+export function MoviePosterCard(props: MoviePosterCardProps) {
+  const {
+    className,
+    imageLoading = "lazy",
+    onNavigate,
+  } = props;
+
+  const id =
+    props.kind === "series" ? props.show.id : props.movie.id;
+  const title =
+    props.kind === "series" ? props.show.name : props.movie.title;
+  const posterPath =
+    props.kind === "series" ? props.show.poster_path : props.movie.poster_path;
+  const voteAverage =
+    props.kind === "series"
+      ? props.show.vote_average
+      : props.movie.vote_average;
+  const href = props.kind === "series" ? `/series/${id}` : `/movie/${id}`;
+
+  const posterSrc = tmdbPosterSrc(posterPath);
 
   return (
     <Link
-      href={`/movie/${movie.id}`}
+      href={href}
       onClick={onNavigate}
       className={cn(
         "disney-card flex-shrink-0 cursor-pointer rounded-lg overflow-hidden",
@@ -32,7 +47,7 @@ export function MoviePosterCard({
         {posterSrc ? (
           <Image
             src={posterSrc}
-            alt={movie.title}
+            alt={title}
             className="w-full h-full object-cover"
             width={180}
             height={270}
@@ -51,7 +66,7 @@ export function MoviePosterCard({
       </div>
       <div className="pt-3 pb-1">
         <h3 className="text-foreground text-sm font-medium truncate">
-          {movie.title}
+          {title}
         </h3>
         <div className="flex items-center gap-3 mt-1 text-xs text-foreground/50">
           <span className="flex items-center gap-1">
@@ -62,7 +77,7 @@ export function MoviePosterCard({
             >
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
-            {movie.vote_average.toFixed(1)} / 10
+            {voteAverage.toFixed(1)} / 10
           </span>
         </div>
       </div>
