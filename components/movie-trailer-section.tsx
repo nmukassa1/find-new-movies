@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TMDBMovie, TMDBVideo } from "@/types/tmdb";
+import { TMDBMovie, TMDBTV, TMDBVideo } from "@/types/tmdb";
 import Image from "next/image";
 import {
   Dialog,
@@ -12,19 +12,26 @@ import {
 import { tmdbPosterSrc } from "@/lib/tmdb/tmdb-poster";
 import { CirclePlay } from "lucide-react";
 
+export type TrailerSectionEntry =
+  | { catalog: "movie"; media: TMDBMovie; trailers: TMDBVideo[] }
+  | { catalog: "series"; media: TMDBTV; trailers: TMDBVideo[] };
+
 interface MovieTrailerSectionProps {
-  trailers: { movie: TMDBMovie; trailers: TMDBVideo[] }[];
+  trailers: TrailerSectionEntry[];
 }
 
 export default function MovieTrailerSection({
   trailers,
 }: MovieTrailerSectionProps) {
-  const [selected, setSelected] = useState<{
-    movie: TMDBMovie;
-    trailers: TMDBVideo[];
-  } | null>(null);
+  const [selected, setSelected] = useState<TrailerSectionEntry | null>(null);
 
   const primaryTrailer = selected?.trailers[0];
+  const selectedTitle =
+    selected?.catalog === "series"
+      ? selected.media.name
+      : selected?.catalog === "movie"
+        ? selected.media.title
+        : "";
 
   return (
     <section className="mb-8 px-8 lg:px-16">
@@ -32,10 +39,17 @@ export default function MovieTrailerSection({
 
       <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
         {trailers.map((item) => {
-          const posterSrc = tmdbPosterSrc(item.movie.poster_path);
+          const posterPath =
+            item.catalog === "series"
+              ? item.media.poster_path
+              : item.media.poster_path;
+          const title =
+            item.catalog === "series" ? item.media.name : item.media.title;
+          const id = item.media.id;
+          const posterSrc = tmdbPosterSrc(posterPath);
           return (
             <button
-              key={item.movie.id}
+              key={id}
               type="button"
               onClick={() => setSelected(item)}
               className="disney-card flex-shrink-0 w-[140px] lg:w-[180px] cursor-pointer rounded-lg overflow-hidden relative aspect-[2/3] bg-card border-0 p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -45,7 +59,7 @@ export default function MovieTrailerSection({
                 <Image
                   src={posterSrc}
                   className="w-full h-full object-cover"
-                  alt={item.movie.title}
+                  alt={title}
                   width={140}
                   height={210}
                   loading="lazy"
@@ -76,7 +90,7 @@ export default function MovieTrailerSection({
               <div className="">
                 <DialogHeader>
                   <DialogTitle className="hidden">
-                    {selected.movie.title}
+                    {selectedTitle}
                   </DialogTitle>
                 </DialogHeader>
               </div>

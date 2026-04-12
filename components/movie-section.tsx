@@ -1,19 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { TMDBMovie, TMDBPaginatedResponse } from "@/types/tmdb";
+import { TMDBMovie, TMDBPaginatedResponse, TMDBTV } from "@/types/tmdb";
 import { filterEnglishMovies } from "@/lib/tmdb/movie.service";
 import { MoviePosterCard } from "@/components/movie-poster-card";
 
-interface MovieSectionProps {
+type MovieSectionProps = {
   title: string;
-  data?: TMDBPaginatedResponse<TMDBMovie>;
   viewAllHref?: string;
-}
+} & (
+  | { catalog: "movie"; data?: TMDBPaginatedResponse<TMDBMovie> }
+  | { catalog: "series"; data?: TMDBPaginatedResponse<TMDBTV> }
+);
 
-export function MovieSection({ title, data, viewAllHref }: MovieSectionProps) {
-  const englishMovies = filterEnglishMovies(data?.results ?? []);
-  const movies = englishMovies;
+export function MovieSection(props: MovieSectionProps) {
+  const { title, viewAllHref, catalog } = props;
 
   return (
     <section className="mb-8 px-8 lg:px-16">
@@ -25,13 +26,22 @@ export function MovieSection({ title, data, viewAllHref }: MovieSectionProps) {
 
       {/* Movie Carousel */}
       <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
-        {movies.map((movie) => (
-          <MoviePosterCard
-            key={movie.id}
-            movie={movie}
-            className="w-[140px] lg:w-[180px]"
-          />
-        ))}
+        {catalog === "movie"
+          ? filterEnglishMovies(props.data?.results ?? []).map((movie) => (
+              <MoviePosterCard
+                key={movie.id}
+                movie={movie}
+                className="w-[140px] lg:w-[180px]"
+              />
+            ))
+          : filterEnglishMovies(props.data?.results ?? []).map((show) => (
+              <MoviePosterCard
+                key={show.id}
+                kind="series"
+                show={show}
+                className="w-[140px] lg:w-[180px]"
+              />
+            ))}
       </div>
     </section>
   );

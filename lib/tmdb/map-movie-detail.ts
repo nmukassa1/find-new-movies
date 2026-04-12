@@ -1,4 +1,9 @@
-import type { TMDBMovie, TMDBMovieDetailsAppended, TMDBVideo } from "@/types/tmdb";
+import type {
+  TMDBCredits,
+  TMDBMovie,
+  TMDBMovieDetailsAppended,
+  TMDBVideo,
+} from "@/types/tmdb";
 
 const TMDB_IMG = "https://image.tmdb.org/t/p";
 const MOVIE_DETAIL_PLACEHOLDER = "/placeholder.svg";
@@ -153,7 +158,9 @@ const WRITER_JOBS = new Set([
   "Novel",
 ]);
 
-export function mapCastAndCrew(d: TMDBMovieDetailsAppended): {
+type WithCredits = { credits?: TMDBCredits };
+
+export function mapCastAndCrew(d: WithCredits): {
   cast: CastMemberViewModel[];
   director: string;
   writers: string[];
@@ -193,7 +200,9 @@ export type ExtraViewModel = {
   youtubeKey: string;
 };
 
-export function mapExtras(d: TMDBMovieDetailsAppended): ExtraViewModel[] {
+type WithVideos = { videos?: { results: TMDBVideo[] } };
+
+export function mapExtras(d: WithVideos): ExtraViewModel[] {
   const results = d.videos?.results ?? [];
   return results
     .filter(isYouTubeVideo)

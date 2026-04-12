@@ -28,7 +28,7 @@ export function HeaderNav() {
           Movies
         </span>
       </Link>
-      <Link href="#" className={HEADER_NAV_ITEM_CLASSNAME}>
+      <Link href="/series" className={HEADER_NAV_ITEM_CLASSNAME}>
         <Tv size={18} />
         <span className="text-[13px] font-medium tracking-wide uppercase">
           Series

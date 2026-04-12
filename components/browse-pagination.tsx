@@ -12,14 +12,17 @@ type BrowsePaginationProps = {
   slug: string;
   page: number;
   totalPages: number;
+  /** Base path without trailing slash, e.g. `/browse/popular` or `/series/browse/popular` */
+  basePath?: string;
 };
 
 export function BrowsePagination({
   slug,
   page,
   totalPages,
+  basePath,
 }: BrowsePaginationProps) {
-  const base = `/browse/${slug}`;
+  const base = basePath ?? `/browse/${slug}`;
   const canPrev = page > 1;
   const canNext = page < totalPages;
 

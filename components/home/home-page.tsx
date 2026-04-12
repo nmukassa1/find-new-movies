@@ -23,45 +23,58 @@ export async function HomePage() {
       <main className="pt-16">
         {homeHero ? <HeroSection hero={homeHero} /> : null}
 
-        <MovieTrailerSection trailers={upcomingMoviesWithTrailers} />
+        <MovieTrailerSection
+          trailers={upcomingMoviesWithTrailers.map(({ movie, trailers }) => ({
+            catalog: "movie" as const,
+            media: movie,
+            trailers,
+          }))}
+        />
 
         <MovieSection
+          catalog="movie"
           title="Popular"
           data={popularMovies}
           viewAllHref={browsePath("popular")}
         />
 
         <MovieSection
+          catalog="movie"
           title="Trending"
           data={trendingMovies}
           viewAllHref={browsePath("trending")}
         />
 
         <MovieSection
+          catalog="movie"
           title="Top rated"
           data={topRatedMovies}
           viewAllHref={browsePath("top-rated")}
         />
 
         <MovieSection
+          catalog="movie"
           title="Now playing"
           data={nowPlayingMovies}
           viewAllHref={browsePath("now-playing")}
         />
 
         <MovieSection
+          catalog="movie"
           title="Action"
           data={actionMovies}
           viewAllHref={browsePath("action")}
         />
 
         <MovieSection
+          catalog="movie"
           title="Comedy"
           data={comedyMovies}
           viewAllHref={browsePath("comedy")}
         />
 
         <MovieSection
+          catalog="movie"
           title={`Best of ${homeFeatureYear}`}
           data={bestOfYearMovies}
           viewAllHref={browsePath("best-of-year")}

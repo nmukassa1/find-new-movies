@@ -12,10 +12,16 @@ interface RelatedMovie {
 
 interface RelatedMoviesProps {
   movies: RelatedMovie[];
+  detailBase?: "movie" | "series";
 }
 
-export function RelatedMovies({ movies }: RelatedMoviesProps) {
+export function RelatedMovies({
+  movies,
+  detailBase = "movie",
+}: RelatedMoviesProps) {
   if (movies.length === 0) return null;
+
+  const basePath = detailBase === "series" ? "/series" : "/movie";
 
   return (
     <section className="px-8 lg:px-16 py-8 bg-background">
@@ -29,7 +35,7 @@ export function RelatedMovies({ movies }: RelatedMoviesProps) {
         {movies.map((movie) => (
           <Link
             key={movie.id}
-            href={`/movie/${movie.id}`}
+            href={`${basePath}/${movie.id}`}
             className="disney-card flex-shrink-0 w-[140px] lg:w-[180px] cursor-pointer rounded-lg overflow-hidden"
           >
             {/* Poster */}

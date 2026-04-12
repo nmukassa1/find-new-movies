@@ -9,6 +9,7 @@ const TMDB_IMG = "https://image.tmdb.org/t/p";
 export type HomeHeroContent = MovieHeroViewModel & {
   id: number;
   overview: string;
+  detailHref: string;
 };
 
 /** Merges any number of lists (deduped by id) and picks one movie at random, or null if every list is empty. */
@@ -31,6 +32,7 @@ export function buildHomeHeroFromDetails(
     ...mapMovieHero(d),
     id: d.id,
     overview: d.overview?.trim() || "",
+    detailHref: `/movie/${d.id}`,
   };
 }
 
@@ -61,5 +63,6 @@ export function buildHomeHeroListFallback(m: TMDBMovie): HomeHeroContent {
     trailerYoutubeKey: undefined,
     id: m.id,
     overview: m.overview?.trim() || "",
+    detailHref: `/movie/${m.id}`,
   };
 }

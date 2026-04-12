@@ -142,3 +142,62 @@ export type TMDBMovieDetailsAppended = TMDBMovieDetails & {
   similar?: TMDBPaginatedResponse<TMDBMovie>;
   release_dates?: TMDBReleaseDatesBlock;
 };
+
+// --- TV (list items) ---
+export type TMDBTV = {
+  id: number;
+  name: string;
+  original_name: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  first_air_date: string;
+  vote_average: number;
+  vote_count: number;
+  popularity: number;
+  genre_ids: number[];
+  original_language: string;
+  origin_country: string[];
+};
+
+/** Show creators / showrunners (TV detail only; not on list results). */
+export type TMDBTVCreatedBy = {
+  id: number;
+  credit_id: string;
+  name: string;
+  gender?: number;
+  profile_path: string | null;
+};
+
+// --- TV details ---
+export type TMDBTVDetails = TMDBTV & {
+  episode_run_time: number[];
+  genres: { id: number; name: string }[];
+  homepage: string | null;
+  status: string;
+  tagline: string | null;
+  number_of_seasons?: number;
+  number_of_episodes?: number;
+  created_by?: TMDBTVCreatedBy[];
+};
+
+export type TMDBContentRating = {
+  iso_3166_1: string;
+  rating: string;
+};
+
+export type TMDBContentRatingsBlock = {
+  results: TMDBContentRating[];
+};
+
+/** TV details + `append_to_response` payloads from getTvDetails */
+export type TMDBTVDetailsAppended = TMDBTVDetails & {
+  production_companies?: { id: number; name: string }[];
+  spoken_languages?: { english_name: string; iso_639_1: string; name: string }[];
+  videos?: { results: TMDBVideo[] };
+  images?: TMDBImagesResponse;
+  credits?: TMDBCredits;
+  recommendations?: TMDBPaginatedResponse<TMDBTV>;
+  similar?: TMDBPaginatedResponse<TMDBTV>;
+  content_ratings?: TMDBContentRatingsBlock;
+};

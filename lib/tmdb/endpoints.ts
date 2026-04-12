@@ -27,6 +27,24 @@ export const TMDB_ENDPOINTS = {
 
   // Discover
   discoverMovies: "/discover/movie",
+  discoverTv: "/discover/tv",
+
+  // TV lists
+  tvPopular: "/tv/popular",
+  tvTopRated: "/tv/top_rated",
+  tvOnTheAir: "/tv/on_the_air",
+  tvAiringToday: "/tv/airing_today",
+  trendingTv: "/trending/tv/week",
+
+  // TV details
+  tvDetails: (tvId: number) => `/tv/${tvId}`,
+  tvVideos: (tvId: number) => `/tv/${tvId}/videos`,
+
+  // Search
+  searchTv: "/search/tv",
+
+  // Genres (TV)
+  tvGenres: "/genre/tv/list",
 
   // Configuration
   configuration: "/configuration",

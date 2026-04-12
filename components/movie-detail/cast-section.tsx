@@ -13,38 +13,69 @@ interface CastSectionProps {
   cast: CastMember[];
   director: string;
   writers: string[];
+  /**
+   * When set (including `[]`), enables TV-style hiding of empty director/writer rows.
+   * Non-empty lists show as "Created by" from TMDB `created_by`.
+   */
+  createdBy?: string[];
 }
 
-export function CastSection({ cast, director, writers }: CastSectionProps) {
+function NameList({ names }: { names: string[] }) {
+  return (
+    <p className="text-foreground">
+      {names.map((name, index) => (
+        <span key={`${name}-${index}`}>
+          <span className="hover:text-primary transition-colors">{name}</span>
+          {index < names.length - 1 && (
+            <span className="text-foreground/40">, </span>
+          )}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+export function CastSection({
+  cast,
+  director,
+  writers,
+  createdBy,
+}: CastSectionProps) {
+  const isSeriesCredits = createdBy !== undefined;
+  const showCreatedBy = Boolean(createdBy?.length);
+  const showDirector = isSeriesCredits ? director !== "—" : true;
+  const showWriters = isSeriesCredits ? writers.some((w) => w !== "—") : true;
+
   return (
     <section className="px-8 lg:px-16 py-8 bg-background">
-      {/* Director & Writers */}
+      {/* Created by (TV) / Director / Writers */}
       <div className="flex flex-wrap gap-8 mb-8 pb-6 border-b border-border">
-        <div>
-          <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">
-            Director
-          </h3>
-          <p className="text-foreground font-medium hover:text-primary transition-colors">
-            {director}
-          </p>
-        </div>
-        <div>
-          <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">
-            Writers
-          </h3>
-          <p className="text-foreground">
-            {writers.map((writer, index) => (
-              <span key={`${writer}-${index}`}>
-                <span className="hover:text-primary transition-colors">
-                  {writer}
-                </span>
-                {index < writers.length - 1 && (
-                  <span className="text-foreground/40">, </span>
-                )}
-              </span>
-            ))}
-          </p>
-        </div>
+        {showCreatedBy ? (
+          <div>
+            <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">
+              Created by
+            </h3>
+            <NameList names={createdBy!} />
+          </div>
+        ) : null}
+        {showDirector ? (
+          <div>
+            <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">
+              Director
+            </h3>
+            <p className="text-foreground font-medium hover:text-primary transition-colors">
+              {director}
+            </p>
+          </div>
+        ) : null}
+        {showWriters ? (
+          <div>
+            <h3 className="text-xs uppercase tracking-wider text-foreground/40 mb-2">
+              Writers
+            </h3>
+            <NameList names={writers} />
+          </div>
+        ) : null}
       </div>
 
       {/* Cast Header */}

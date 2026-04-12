@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,8 @@ import {
   HEADER_NAV_ITEM_CLASSNAME,
 } from "./constants";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
-import type { TMDBMovie, TMDBPaginatedResponse } from "@/types/tmdb";
+import { mergeMovieAndTvSearchResults } from "@/lib/search/merge-search-results";
+import type { TMDBMovie, TMDBPaginatedResponse, TMDBTV } from "@/types/tmdb";
 
 const SEARCH_DEBOUNCE_MS = 320;
 const MIN_QUERY_CHARS = 2;
@@ -25,6 +26,23 @@ export type SiteSearchDialogProps = {
   variant?: "default" | "iconOnly";
 };
 
+async function parseSearchResponse<T>(
+  res: Response,
+): Promise<{ ok: true; results: T[] } | { ok: false }> {
+  try {
+    const data = (await res.json()) as
+      | TMDBPaginatedResponse<T>
+      | { error?: string };
+    if (!res.ok) return { ok: false };
+    if ("results" in data && Array.isArray(data.results)) {
+      return { ok: true, results: data.results as T[] };
+    }
+    return { ok: true, results: [] };
+  } catch {
+    return { ok: false };
+  }
+}
+
 export function SiteSearchDialog({
   triggerClassName,
   onBeforeOpen,
@@ -33,7 +51,8 @@ export function SiteSearchDialog({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
-  const [movies, setMovies] = useState<TMDBMovie[] | null>(null);
+  const [movieResults, setMovieResults] = useState<TMDBMovie[] | null>(null);
+  const [tvResults, setTvResults] = useState<TMDBTV[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +67,8 @@ export function SiteSearchDialog({
     setOpen(next);
     if (!next) {
       setQuery("");
-      setMovies(null);
+      setMovieResults(null);
+      setTvResults(null);
       setError(null);
       setLoading(false);
     }
@@ -60,59 +80,82 @@ export function SiteSearchDialog({
     const trimmed = debouncedQuery.trim();
 
     if (trimmed.length < MIN_QUERY_CHARS) {
-      setMovies(null);
+      setMovieResults(null);
+      setTvResults(null);
       setError(null);
       setLoading(false);
       return;
     }
 
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
-
     const params = new URLSearchParams({ q: trimmed });
 
-    fetch(`/api/search/movies?${params.toString()}`, { signal: controller.signal })
-      .then(async (res) => {
-        const data = (await res.json()) as
-          | TMDBPaginatedResponse<TMDBMovie>
-          | { error?: string };
+    setLoading(true);
+    setError(null);
+    setMovieResults(null);
+    setTvResults(null);
 
-        if (!res.ok) {
-          const msg =
-            "error" in data && typeof data.error === "string"
-              ? data.error
-              : "Search failed";
-          throw new Error(msg);
-        }
+    const movieUrl = `/api/search/movies?${params.toString()}`;
+    const tvUrl = `/api/search/tv?${params.toString()}`;
 
-        if ("results" in data && Array.isArray(data.results)) {
-          setMovies(data.results);
-        } else {
-          setMovies([]);
+    (async () => {
+      try {
+        const settled = await Promise.allSettled([
+          fetch(movieUrl, { signal: controller.signal }).then((res) =>
+            parseSearchResponse<TMDBMovie>(res),
+          ),
+          fetch(tvUrl, { signal: controller.signal }).then((res) =>
+            parseSearchResponse<TMDBTV>(res),
+          ),
+        ]);
+
+        if (controller.signal.aborted) return;
+
+        const movieParsed =
+          settled[0]?.status === "fulfilled"
+            ? settled[0].value
+            : ({ ok: false as const } satisfies { ok: false });
+        const tvParsed =
+          settled[1]?.status === "fulfilled"
+            ? settled[1].value
+            : ({ ok: false as const } satisfies { ok: false });
+
+        const movies = movieParsed.ok ? movieParsed.results : [];
+        const shows = tvParsed.ok ? tvParsed.results : [];
+
+        setMovieResults(movies);
+        setTvResults(shows);
+
+        if (!movieParsed.ok && !tvParsed.ok) {
+          setError("Search temporarily unavailable");
         }
-      })
-      .catch((e: unknown) => {
+      } catch (e: unknown) {
         if (e instanceof Error && e.name === "AbortError") return;
-        setMovies(null);
+        setMovieResults(null);
+        setTvResults(null);
         setError(e instanceof Error ? e.message : "Something went wrong");
-      })
-      .finally(() => {
+      } finally {
         if (!controller.signal.aborted) setLoading(false);
-      });
+      }
+    })();
 
     return () => controller.abort();
   }, [debouncedQuery, open]);
 
   const trimmedLen = debouncedQuery.trim().length;
+  const trimmedQuery = debouncedQuery.trim();
+  const mergedResults = useMemo(() => {
+    if (movieResults === null || tvResults === null) return null;
+    return mergeMovieAndTvSearchResults(trimmedQuery, movieResults, tvResults);
+  }, [movieResults, tvResults, trimmedQuery]);
+
   const showHint = trimmedLen > 0 && trimmedLen < MIN_QUERY_CHARS;
-  const showEmpty =
+  const searchComplete =
     !loading &&
     trimmedLen >= MIN_QUERY_CHARS &&
-    movies !== null &&
-    movies.length === 0;
-  const showGrid =
-    !loading && movies !== null && movies.length > 0 && trimmedLen >= MIN_QUERY_CHARS;
+    mergedResults !== null;
+  const showEmpty = searchComplete && mergedResults.length === 0;
+  const showGrid = searchComplete && mergedResults.length > 0;
 
   const triggerBaseClass =
     variant === "iconOnly"
@@ -131,7 +174,7 @@ export function SiteSearchDialog({
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls="site-search-dialog"
-        aria-label={variant === "iconOnly" ? "Search movies" : undefined}
+        aria-label={variant === "iconOnly" ? "Search movies and TV" : undefined}
       >
         {variant === "iconOnly" ? (
           <Search size={20} strokeWidth={2} aria-hidden />
@@ -151,17 +194,17 @@ export function SiteSearchDialog({
         showCloseButton
         className="z-[101] gap-0"
       >
-        <DialogTitle className="sr-only">Search movies</DialogTitle>
+        <DialogTitle className="sr-only">Search movies and TV</DialogTitle>
         <div className="flex min-h-0 flex-1 flex-col gap-4 px-4 pb-6 pt-8 sm:px-6 md:pt-12">
           <Input
             ref={inputRef}
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for movies…"
+            placeholder="Search for movies and TV…"
             autoComplete="off"
             className="h-12 shrink-0 text-base md:h-14 md:text-lg"
-            aria-label="Search movies"
+            aria-label="Search movies and TV"
             aria-busy={loading}
           />
 
@@ -193,21 +236,32 @@ export function SiteSearchDialog({
 
             {!loading && !error && showEmpty ? (
               <p className="text-center text-sm text-muted-foreground">
-                No movies found.
+                No movies or TV series found.
               </p>
             ) : null}
 
-            {showGrid && movies ? (
+            {!loading && !error && showGrid && mergedResults ? (
               <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                {movies.map((movie) => (
-                  <li key={movie.id} className="min-w-0">
-                    <MoviePosterCard
-                      movie={movie}
-                      className="w-full max-w-[200px] mx-auto"
-                      onNavigate={() => setOpen(false)}
-                    />
-                  </li>
-                ))}
+                {mergedResults.map((hit) =>
+                  hit.catalog === "movie" ? (
+                    <li key={`m-${hit.movie.id}`} className="min-w-0">
+                      <MoviePosterCard
+                        movie={hit.movie}
+                        className="mx-auto w-full max-w-[200px]"
+                        onNavigate={() => setOpen(false)}
+                      />
+                    </li>
+                  ) : (
+                    <li key={`t-${hit.show.id}`} className="min-w-0">
+                      <MoviePosterCard
+                        kind="series"
+                        show={hit.show}
+                        className="mx-auto w-full max-w-[200px]"
+                        onNavigate={() => setOpen(false)}
+                      />
+                    </li>
+                  ),
+                )}
               </ul>
             ) : null}
           </div>
