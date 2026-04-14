@@ -14,7 +14,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-export function HeaderMobileMenu() {
+export function HeaderMobileMenu({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
@@ -54,16 +54,18 @@ export function HeaderMobileMenu() {
                 Home
               </span>
             </Link>
-            <Link
-              href="#"
-              className={HEADER_MOBILE_SHEET_LINK_CLASSNAME}
-              onClick={() => setSheetOpen(false)}
-            >
-              <Plus size={20} aria-hidden />
-              <span className="text-sm font-medium uppercase tracking-wide">
-                Watchlist
-              </span>
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/watchlist"
+                className={HEADER_MOBILE_SHEET_LINK_CLASSNAME}
+                onClick={() => setSheetOpen(false)}
+              >
+                <Plus size={20} aria-hidden />
+                <span className="text-sm font-medium uppercase tracking-wide">
+                  Watchlist
+                </span>
+              </Link>
+            ) : null}
             <Link
               href="#"
               className={HEADER_MOBILE_SHEET_LINK_CLASSNAME}
