@@ -1,4 +1,3 @@
-import { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/prisma/client";
 import { hashPassword } from "@/lib/auth/password";
 import type { RegisterInput } from "@/lib/validations/auth";
@@ -25,7 +24,10 @@ export async function registerCredentialsUser(
     });
     return { ok: true, userId: user.id };
   } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+    if (
+      e instanceof prisma.PrismaClientKnownRequestError &&
+      e.code === "P2002"
+    ) {
       return { ok: false, code: "EMAIL_TAKEN" };
     }
     return { ok: false, code: "UNKNOWN" };
