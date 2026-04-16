@@ -98,6 +98,15 @@ export async function removeWatchlistItem(
   return result.count > 0;
 }
 
+export const WATCHLIST_PAGE_SIZE = 20;
+
+export type WatchlistPageResult = {
+  items: WatchlistItemRow[];
+  total: number;
+  page: number;
+  totalPages: number;
+};
+
 export async function listWatchlistItems(
   userId: string,
 ): Promise<WatchlistItemRow[]> {
@@ -106,6 +115,40 @@ export async function listWatchlistItems(
     orderBy: { createdAt: "desc" },
   });
   return rows.map(toRow);
+}
+
+/** Newest first; `page` is clamped to valid range when `total > 0`. */
+export async function listWatchlistItemsPage(
+  userId: string,
+  requestedPage: number,
+  pageSize: number = WATCHLIST_PAGE_SIZE,
+): Promise<WatchlistPageResult> {
+  const total = await prisma.watchlistItem.count({ where: { userId } });
+
+  if (total === 0) {
+    return { items: [], total: 0, page: 1, totalPages: 0 };
+  }
+
+  const totalPages = Math.ceil(total / pageSize);
+  const page = Math.min(
+    Math.max(1, Math.floor(requestedPage)),
+    totalPages,
+  );
+  const skip = (page - 1) * pageSize;
+
+  const rows = await prisma.watchlistItem.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    skip,
+    take: pageSize,
+  });
+
+  return {
+    items: rows.map(toRow),
+    total,
+    page,
+    totalPages,
+  };
 }
 
 export async function toggleWatchlistItem(
