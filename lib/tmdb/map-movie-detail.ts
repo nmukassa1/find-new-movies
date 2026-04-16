@@ -71,6 +71,7 @@ function pickHeroTrailerKey(d: TMDBMovieDetailsAppended): string | undefined {
 }
 
 export type MovieHeroViewModel = {
+  tmdbId: number;
   title: string;
   tagline: string;
   year: number;
@@ -92,6 +93,7 @@ export function mapMovieHero(d: TMDBMovieDetailsAppended): MovieHeroViewModel {
   const poster = tmdbFile("w780", d.poster_path);
 
   return {
+    tmdbId: d.id,
     title: d.title || d.original_title,
     tagline: d.tagline?.trim() || "",
     year: releaseYear(d.release_date),

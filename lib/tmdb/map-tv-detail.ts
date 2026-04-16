@@ -87,6 +87,7 @@ export function mapTvHero(d: TMDBTVDetailsAppended): MovieHeroViewModel {
   const poster = tmdbFile("w780", d.poster_path);
 
   return {
+    tmdbId: d.id,
     title: d.name || d.original_name,
     tagline: d.tagline?.trim() || "",
     year: firstAirYear(d.first_air_date),
