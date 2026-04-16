@@ -109,5 +109,3 @@ export async function removeWatchlistItemAction(
   const removed = await removeWatchlistItem(userId, mediaType, tmdbId);
   return { ok: true, removed };
 }
-
-export type { WatchlistSnapshotInput };

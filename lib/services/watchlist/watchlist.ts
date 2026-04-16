@@ -1,10 +1,14 @@
-// import type { WatchlistMediaType } from "@prisma/client";
 import { prisma } from "@/lib/prisma/client";
-import type { WatchlistSnapshotInput } from "@/lib/validations/watchlist";
+import type {
+  WatchlistSnapshotInput,
+} from "@/lib/validations/watchlist";
+
+/** Aligns with Prisma `WatchlistMediaType` and `watchlistSnapshotSchema`. */
+export type WatchlistMediaType = WatchlistSnapshotInput["mediaType"];
 
 export type WatchlistItemRow = {
   id: string;
-  mediaType: "movie" | "tv";
+  mediaType: WatchlistMediaType;
   tmdbId: number;
   title: string;
   posterUrl: string;
@@ -14,7 +18,7 @@ export type WatchlistItemRow = {
 
 function toRow(item: {
   id: string;
-  mediaType: "movie" | "tv";
+  mediaType: WatchlistMediaType;
   tmdbId: number;
   title: string;
   posterUrl: string;
@@ -34,7 +38,7 @@ function toRow(item: {
 
 export async function hasWatchlistItem(
   userId: string,
-  mediaType: "movie" | "tv",
+  mediaType: WatchlistMediaType,
   tmdbId: number,
 ): Promise<boolean> {
   const row = await prisma.watchlistItem.findUnique({
@@ -51,7 +55,7 @@ export async function upsertWatchlistItem(
   userId: string,
   input: WatchlistSnapshotInput,
 ): Promise<WatchlistItemRow> {
-  const mediaType = input.mediaType as "movie" | "tv";
+  const mediaType = input.mediaType;
   const releaseYear =
     input.releaseYear === null || input.releaseYear === undefined
       ? null
@@ -85,7 +89,7 @@ export async function upsertWatchlistItem(
 
 export async function removeWatchlistItem(
   userId: string,
-  mediaType: "movie" | "tv",
+  mediaType: WatchlistMediaType,
   tmdbId: number,
 ): Promise<boolean> {
   const result = await prisma.watchlistItem.deleteMany({
@@ -108,7 +112,7 @@ export async function toggleWatchlistItem(
   userId: string,
   input: WatchlistSnapshotInput,
 ): Promise<{ inWatchlist: boolean }> {
-  const mediaType = input.mediaType as "movie" | "tv";
+  const mediaType = input.mediaType;
   const exists = await hasWatchlistItem(userId, mediaType, input.tmdbId);
   if (exists) {
     await removeWatchlistItem(userId, mediaType, input.tmdbId);

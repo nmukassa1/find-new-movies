@@ -51,6 +51,7 @@ export function buildHomeHeroListFallback(m: TMDBMovie): HomeHeroContent {
     : 0;
 
   return {
+    tmdbId: m.id,
     title: m.title || m.original_title,
     tagline: "",
     year: Number.isFinite(year) ? year : 0,

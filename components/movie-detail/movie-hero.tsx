@@ -1,6 +1,6 @@
 "use client";
 
-import { Play, Plus, Users, Info, Volume2, VolumeX } from "lucide-react";
+import { Play, Users, Info, Volume2, VolumeX } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dialog,
@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dialog";
 import { ensureYouTubeIframeAPI } from "@/lib/youtube/iframe-api";
 import { cn } from "@/lib/utils";
+import { WatchlistToggleButton } from "@/components/watchlist/watchlist-toggle-button";
 
 interface MovieHeroProps {
   movie: {
+    tmdbId: number;
     title: string;
     tagline: string;
     year: number;
@@ -24,6 +26,9 @@ interface MovieHeroProps {
     logo?: string;
     trailerYoutubeKey?: string;
   };
+  initialInWatchlist: boolean;
+  isAuthenticatedServer: boolean;
+  watchlistMediaType: "MOVIE" | "TV";
 }
 
 type BgPlayer = {
@@ -49,7 +54,12 @@ function youtubeModalEmbedSrc(videoId: string): string {
 
 const MOBILE_MAX_WIDTH_PX = 767;
 
-export function MovieHero({ movie }: MovieHeroProps) {
+export function MovieHero({
+  movie,
+  initialInWatchlist,
+  isAuthenticatedServer,
+  watchlistMediaType,
+}: MovieHeroProps) {
   const [reduceMotion, setReduceMotion] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(
     null,
@@ -274,12 +284,17 @@ export function MovieHero({ movie }: MovieHeroProps) {
               <span>Trailer</span>
             </button>
 
-            <button
-              type="button"
-              className="flex items-center justify-center w-14 h-14 rounded-full bg-muted/80 backdrop-blur-sm border-2 border-foreground/20 hover:border-foreground/60 transition-all duration-200 group"
-            >
-              <Plus className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
-            </button>
+            <WatchlistToggleButton
+              initialInWatchlist={initialInWatchlist}
+              isAuthenticatedServer={isAuthenticatedServer}
+              snapshot={{
+                mediaType: watchlistMediaType,
+                tmdbId: movie.tmdbId,
+                title: movie.title,
+                posterUrl: movie.poster,
+                releaseYear: movie.year > 0 ? movie.year : null,
+              }}
+            />
 
             <button
               type="button"
