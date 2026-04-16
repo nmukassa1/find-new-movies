@@ -15,14 +15,38 @@ datasource db {
 
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String   @unique
-  emailVerified DateTime?
-  image         String?
-  passwordHash  String?
-  accounts      Account[]
-  sessions      Session[]
+  id             String          @id @default(cuid())
+  name           String
+  email          String          @unique
+  emailVerified  DateTime?
+  image          String?
+  passwordHash   String?
+  accounts       Account[]
+  sessions       Session[]
+  watchlistItems WatchlistItem[]
+}
+
+/// One implicit “default” watchlist per user: rows in this table are the items.
+enum WatchlistMediaType {
+  MOVIE
+  TV
+}
+
+model WatchlistItem {
+  id          String             @id @default(cuid())
+  userId      String
+  mediaType   WatchlistMediaType
+  tmdbId      Int
+  /// Snapshot fields for fast list rendering (no TMDB refetch required).
+  title       String
+  posterUrl   String
+  releaseYear Int?
+  createdAt   DateTime           @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mediaType, tmdbId])
+  @@index([userId, createdAt])
 }
 
 model Account {
