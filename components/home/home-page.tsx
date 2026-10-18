@@ -29,6 +29,7 @@ export async function HomePage() {
             media: movie,
             trailers,
           }))}
+          viewAllHref={browsePath("upcoming")}
         />
 
         <MovieSection

@@ -43,11 +43,13 @@ export function getTopRatedMovies(
 // Upcoming Movies
 export async function getUpcomingMovies(
   region: "US" | "GB" = "US",
+  page = 1,
 ): Promise<TMDBUpcomingMoviesResponse> {
   const res = await tmdbFetch<TMDBUpcomingMoviesResponse>(
     TMDB_ENDPOINTS.upcoming,
     {
       region,
+      page,
     },
   );
 

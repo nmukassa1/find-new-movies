@@ -6,7 +6,6 @@ import {
   getBrowseTitle,
   isBrowseSlug,
 } from "@/lib/browse";
-import { filterEnglishMovies } from "@/lib/tmdb/movie.service";
 import type { Metadata } from "next";
 
 type Props = {
@@ -39,7 +38,7 @@ export default async function BrowseMoviesPage({ params, searchParams }: Props) 
   if (data.total_pages > 0 && page > data.total_pages) {
     notFound();
   }
-  const movies = filterEnglishMovies(data.results);
+  const movies = data.results;
   const title = getBrowseTitle(slug);
 
   return (
@@ -49,7 +48,7 @@ export default async function BrowseMoviesPage({ params, searchParams }: Props) 
 
         {movies.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            No English-language titles on this page. Try another page.
+            No titles found.
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8">

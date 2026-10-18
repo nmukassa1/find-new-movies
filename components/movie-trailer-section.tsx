@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { TMDBMovie, TMDBTV, TMDBVideo } from "@/types/tmdb";
 import Image from "next/image";
 import {
@@ -18,10 +19,12 @@ export type TrailerSectionEntry =
 
 interface MovieTrailerSectionProps {
   trailers: TrailerSectionEntry[];
+  viewAllHref?: string;
 }
 
 export default function MovieTrailerSection({
   trailers,
+  viewAllHref,
 }: MovieTrailerSectionProps) {
   const [selected, setSelected] = useState<TrailerSectionEntry | null>(null);
 
@@ -35,7 +38,10 @@ export default function MovieTrailerSection({
 
   return (
     <section className="mb-8 px-8 lg:px-16">
-      <h2 className="section-title text-foreground">Trailers</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="section-title text-foreground">Trailers</h2>
+        {viewAllHref ? <Link href={viewAllHref}>View All</Link> : null}
+      </div>
 
       <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-4 -mx-2 px-2">
         {trailers.map((item) => {
@@ -54,7 +60,7 @@ export default function MovieTrailerSection({
               onClick={() => setSelected(item)}
               className="disney-card flex-shrink-0 w-[140px] lg:w-[180px] cursor-pointer rounded-lg overflow-hidden relative aspect-[2/3] bg-card border-0 p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              <CirclePlay className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary size-8 stroke-white group-hover:stroke-primary transition-all duration-300 w-1/2 h-1/2" />
+              <CirclePlay className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary size-8 stroke-white group-hover:stroke-primary transition-all duration-300 w-1/4 h-1/4" />
               {posterSrc ? (
                 <Image
                   src={posterSrc}
@@ -89,9 +95,7 @@ export default function MovieTrailerSection({
             <>
               <div className="">
                 <DialogHeader>
-                  <DialogTitle className="hidden">
-                    {selectedTitle}
-                  </DialogTitle>
+                  <DialogTitle className="hidden">{selectedTitle}</DialogTitle>
                 </DialogHeader>
               </div>
               {primaryTrailer ? (

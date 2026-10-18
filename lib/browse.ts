@@ -1,16 +1,18 @@
 import { getHomeFeatureYear } from "@/lib/home-feature-year";
-import {
-  discoverMoviesByGenre,
-  discoverMoviesByReleaseYear,
-  getNowPlayingMovies,
-  getPopularMovies,
-  getTopRatedMovies,
-  getTrendingMovies,
-} from "@/lib/tmdb/movie.service";
+import { getTrendingMovies } from "@/lib/tmdb/movie.service";
 import { TMDB_MOVIE_GENRES } from "@/lib/tmdb/movie-genres";
+import { tmdbFetch } from "@/lib/tmdb/tmdb-client";
+import { TMDB_ENDPOINTS } from "@/lib/tmdb/endpoints";
+import {
+  ENGLISH_ONLY,
+  isoDateFromToday,
+  repaginateFiltered,
+  repaginateTmdb,
+} from "@/lib/tmdb/browse-helpers";
 import { TMDBMovie, TMDBPaginatedResponse } from "@/types/tmdb";
 
 export const BROWSE_SLUGS = [
+  "upcoming",
   "popular",
   "trending",
   "top-rated",
@@ -28,6 +30,8 @@ export function isBrowseSlug(value: string): value is BrowseSlug {
 
 export function getBrowseTitle(slug: BrowseSlug): string {
   switch (slug) {
+    case "upcoming":
+      return "Latest movies";
     case "popular":
       return "Popular";
     case "trending":
@@ -57,34 +61,55 @@ export async function fetchBrowseMovies(
   slug: BrowseSlug,
   page: number,
 ): Promise<TMDBPaginatedResponse<TMDBMovie>> {
-  const region = "US" as const;
+  const discover = (params: Record<string, string | number>) =>
+    repaginateTmdb(
+      (tmdbPage) =>
+        tmdbFetch<TMDBPaginatedResponse<TMDBMovie>>(
+          TMDB_ENDPOINTS.discoverMovies,
+          {
+            ...ENGLISH_ONLY,
+            region: "US",
+            sort_by: "popularity.desc",
+            page: tmdbPage,
+            ...params,
+          },
+        ),
+      page,
+    );
+
   switch (slug) {
+    case "upcoming":
+      return discover({
+        with_release_type: "2|3",
+        "release_date.gte": isoDateFromToday(1),
+      });
     case "popular":
-      return getPopularMovies(region, page);
+      return discover({});
     case "trending":
-      return getTrendingMovies(page);
+      return repaginateFiltered(getTrendingMovies, page);
     case "top-rated":
-      return getTopRatedMovies(region, page);
+      return discover({
+        sort_by: "vote_average.desc",
+        "vote_count.gte": 300,
+      });
     case "now-playing":
-      return getNowPlayingMovies(region, page);
+      return discover({
+        with_release_type: "2|3",
+        "release_date.gte": isoDateFromToday(-42),
+        "release_date.lte": isoDateFromToday(0),
+      });
     case "action":
-      return discoverMoviesByGenre(TMDB_MOVIE_GENRES.Action, region, page);
+      return discover({ with_genres: TMDB_MOVIE_GENRES.Action });
     case "comedy":
-      return discoverMoviesByGenre(
-        [
+      return discover({
+        with_genres: [
           TMDB_MOVIE_GENRES.Comedy,
           TMDB_MOVIE_GENRES.Drama,
           TMDB_MOVIE_GENRES.Romance,
-        ],
-        region,
-        page,
-      );
+        ].join(","),
+      });
     case "best-of-year":
-      return discoverMoviesByReleaseYear(
-        getHomeFeatureYear(),
-        region,
-        page,
-      );
+      return discover({ primary_release_year: getHomeFeatureYear() });
     default: {
       const _exhaustive: never = slug;
       return _exhaustive;

@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { MoviePosterCard } from "@/components/movie-poster-card";
 import { BrowsePagination } from "@/components/browse-pagination";
-import { filterEnglishMovies } from "@/lib/tmdb/movie.service";
 import {
   fetchBrowseSeries,
   getSeriesBrowseTitle,
@@ -40,7 +39,7 @@ export default async function BrowseSeriesPage({ params, searchParams }: Props) 
   if (data.total_pages > 0 && page > data.total_pages) {
     notFound();
   }
-  const shows = filterEnglishMovies(data.results);
+  const shows = data.results;
   const title = getSeriesBrowseTitle(slug);
   const listBase = seriesBrowsePath(slug);
 
@@ -51,7 +50,7 @@ export default async function BrowseSeriesPage({ params, searchParams }: Props) 
 
         {shows.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            No English-language titles on this page. Try another page.
+            No titles found.
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8">

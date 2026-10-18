@@ -1,14 +1,14 @@
 import { getHomeFeatureYear } from "@/lib/home-feature-year";
-import {
-  discoverTvByFirstAirYear,
-  discoverTvByGenre,
-  getAiringTodayTv,
-  getOnTheAirTv,
-  getPopularTv,
-  getTopRatedTv,
-  getTrendingTv,
-} from "@/lib/tmdb/tv.service";
+import { getTrendingTv } from "@/lib/tmdb/tv.service";
 import { TMDB_TV_GENRES } from "@/lib/tmdb/tv-genres";
+import { tmdbFetch } from "@/lib/tmdb/tmdb-client";
+import { TMDB_ENDPOINTS } from "@/lib/tmdb/endpoints";
+import {
+  ENGLISH_ONLY,
+  isoDateFromToday,
+  repaginateFiltered,
+  repaginateTmdb,
+} from "@/lib/tmdb/browse-helpers";
 import { TMDBPaginatedResponse, TMDBTV } from "@/types/tmdb";
 
 export const SERIES_BROWSE_SLUGS = [
@@ -61,32 +61,51 @@ export async function fetchBrowseSeries(
   slug: SeriesBrowseSlug,
   page: number,
 ): Promise<TMDBPaginatedResponse<TMDBTV>> {
-  const region = "US" as const;
+  const discover = (params: Record<string, string | number>) =>
+    repaginateTmdb(
+      (tmdbPage) =>
+        tmdbFetch<TMDBPaginatedResponse<TMDBTV>>(TMDB_ENDPOINTS.discoverTv, {
+          ...ENGLISH_ONLY,
+          region: "US",
+          sort_by: "popularity.desc",
+          page: tmdbPage,
+          ...params,
+        }),
+      page,
+    );
+
   switch (slug) {
     case "popular":
-      return getPopularTv(region, page);
+      return discover({});
     case "trending":
-      return getTrendingTv(page);
+      return repaginateFiltered(getTrendingTv, page);
     case "top-rated":
-      return getTopRatedTv(region, page);
+      return discover({
+        sort_by: "vote_average.desc",
+        "vote_count.gte": 200,
+      });
     case "on-the-air":
-      return getOnTheAirTv(region, page);
+      return discover({
+        "air_date.gte": isoDateFromToday(0),
+        "air_date.lte": isoDateFromToday(7),
+      });
     case "airing-today":
-      return getAiringTodayTv(region, page);
+      return discover({
+        "air_date.gte": isoDateFromToday(0),
+        "air_date.lte": isoDateFromToday(0),
+      });
     case "action":
-      return discoverTvByGenre(TMDB_TV_GENRES.ActionAdventure, region, page);
+      return discover({ with_genres: TMDB_TV_GENRES.ActionAdventure });
     case "comedy":
-      return discoverTvByGenre(
-        [
+      return discover({
+        with_genres: [
           TMDB_TV_GENRES.Comedy,
           TMDB_TV_GENRES.Drama,
           TMDB_TV_GENRES.Mystery,
-        ],
-        region,
-        page,
-      );
+        ].join(","),
+      });
     case "best-of-year":
-      return discoverTvByFirstAirYear(getHomeFeatureYear(), region, page);
+      return discover({ first_air_date_year: getHomeFeatureYear() });
     default: {
       const _exhaustive: never = slug;
       return _exhaustive;
